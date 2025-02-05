@@ -1,8 +1,0 @@
-# exclude node modules
-node_modules/
-
-# exclude spotify_data.csv (too large)
-db/spotify_data.csv
-
-# spotifyAPI credentials
-.env
