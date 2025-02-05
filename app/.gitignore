@@ -1,3 +1,6 @@
+# vscode configs
+.vscode/
+
 # exclude node modules
 node_modules/
 
