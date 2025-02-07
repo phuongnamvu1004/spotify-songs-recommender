@@ -3,15 +3,11 @@ const express = require("express");
 const querystring = require("querystring");
 const request = require("request");
 const path = require("path");
-const cors = require("cors");
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
-
-// Update redirect_uri to include your Vue.js dev server port
-const redirect_uri = process.env.NODE_ENV === 'production' 
-  ? "http://localhost:3000/callback"
-  : "http://localhost:3000/api/callback";
+// Update redirect_uri to match exactly what's in Spotify Dashboard
+const redirect_uri = "http://localhost:3000/callback";
 
 // User's access_token and refresh_token
 var access_token;
@@ -19,10 +15,32 @@ var refresh_token;
 
 const app = express();
 
-// Add middleware
-app.use(cors());
+// Simplify middleware for testing
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
+
+// Middleware to check for token
+const requireToken = async (req, res, next) => {
+  if (!access_token) {
+    return res.status(401).json({ error: 'No access token. Please login first' });
+  }
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+    if (response.status === 401) {
+      // Token expired, try refresh
+      if (refresh_token) {
+        access_token = await refreshAccessToken(refresh_token);
+      } else {
+        return res.status(401).json({ error: 'Token expired. Please login again' });
+      }
+    }
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
 
 // Helper function that was missing
 function generateRandomString(length) {
@@ -54,9 +72,10 @@ async function refreshAccessToken(refresh_token) {
   return data.access_token;
 }
 
-app.get("/api/login", function (req, res) {
+// Auth-related routes - keep simple for Spotify OAuth
+app.get("/login", function (req, res) {
   const state = generateRandomString(16);
-  const scope = "user-read-private user-read-email";
+  const scope = "user-read-private user-read-email playlist-read-private";
 
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
@@ -70,17 +89,12 @@ app.get("/api/login", function (req, res) {
   );
 });
 
-app.get("/api/callback", function (req, res) {
+app.get("/callback", function (req, res) {
   const code = req.query.code || null;
   const state = req.query.state || null;
 
   if (state === null) {
-    res.redirect(
-      "/#" +
-        querystring.stringify({
-          error: "state_mismatch",
-        })
-    );
+    res.redirect('http://localhost:5173/#/error');
   } else {
     const authOptions = {
       url: "https://accounts.spotify.com/api/token",
@@ -98,26 +112,29 @@ app.get("/api/callback", function (req, res) {
       json: true,
     };
 
-    // Add the actual request to get the token
     request.post(authOptions, function (error, response, body) {
       if (!error && response.statusCode === 200) {
         access_token = body.access_token;
         refresh_token = body.refresh_token;
 
-        res.redirect("/get-playlists");
+        // Redirect to Vue frontend playlists page
+        res.redirect('http://localhost:5173/#/playlists');
       } else {
-        res.redirect(
-          "/#" +
-            querystring.stringify({
-              error: "invalid_token",
-            })
-        );
+        res.redirect('http://localhost:5173/#/error');
       }
     });
   }
 });
 
-app.get("/api/get-playlists", async (req, res) => {
+// API routes - use /api prefix for all data operations
+app.get("/api/auth-status", (req, res) => {
+  res.json({ 
+    isAuthenticated: !!access_token,
+    hasRefreshToken: !!refresh_token
+  });
+});
+
+app.get("/api/get-playlists", requireToken, async (req, res) => {
   const response = await fetch("https://api.spotify.com/v1/me/playlists", {
     headers: {
       Authorization: `Bearer ${access_token}`,
@@ -127,7 +144,8 @@ app.get("/api/get-playlists", async (req, res) => {
   res.json(data);
 });
 
-app.get("/api/playlist-tracks/:playlistId", async (req, res) => {
+// Add middleware to protected routes
+app.get("/api/playlist-tracks/:playlistId", requireToken, async (req, res) => {
   try {
     const playlistId = req.params.playlistId;
     const response = await fetch(
@@ -146,10 +164,10 @@ app.get("/api/playlist-tracks/:playlistId", async (req, res) => {
   }
 });
 
-// Serve Vue app for all other routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// Remove the Vue serving middleware for now
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
 
 app.listen(3000, () => {
   console.log("App is listening on port 3000...");
