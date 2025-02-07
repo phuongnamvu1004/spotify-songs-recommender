@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"nodemon index.js\" \"vite\"",
+    "build": "vite build",
+    "preview": "node index.js"
   },
   "keywords": [],
   "author": "",
@@ -17,9 +18,13 @@
     "papaparse": "^5.5.2",
     "pg": "^8.13.1",
     "request": "^2.88.2",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "vite": "^5.0.0"
   }
 }

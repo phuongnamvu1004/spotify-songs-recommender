@@ -2,16 +2,27 @@ require("dotenv").config();
 const express = require("express");
 const querystring = require("querystring");
 const request = require("request");
+const path = require("path");
+const cors = require("cors");
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
-const redirect_uri = "http://localhost:3000/callback";
+
+// Update redirect_uri to include your Vue.js dev server port
+const redirect_uri = process.env.NODE_ENV === 'production' 
+  ? "http://localhost:3000/callback"
+  : "http://localhost:3000/api/callback";
 
 // User's access_token and refresh_token
 var access_token;
 var refresh_token;
 
 const app = express();
+
+// Add middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // Helper function that was missing
 function generateRandomString(length) {
@@ -43,7 +54,7 @@ async function refreshAccessToken(refresh_token) {
   return data.access_token;
 }
 
-app.get("/login", function (req, res) {
+app.get("/api/login", function (req, res) {
   const state = generateRandomString(16);
   const scope = "user-read-private user-read-email";
 
@@ -59,7 +70,7 @@ app.get("/login", function (req, res) {
   );
 });
 
-app.get("/callback", function (req, res) {
+app.get("/api/callback", function (req, res) {
   const code = req.query.code || null;
   const state = req.query.state || null;
 
@@ -106,7 +117,7 @@ app.get("/callback", function (req, res) {
   }
 });
 
-app.get("/get-playlists", async (req, res) => {
+app.get("/api/get-playlists", async (req, res) => {
   const response = await fetch("https://api.spotify.com/v1/me/playlists", {
     headers: {
       Authorization: `Bearer ${access_token}`,
@@ -116,7 +127,7 @@ app.get("/get-playlists", async (req, res) => {
   res.json(data);
 });
 
-app.get("/playlist-tracks/:playlistId", async (req, res) => {
+app.get("/api/playlist-tracks/:playlistId", async (req, res) => {
   try {
     const playlistId = req.params.playlistId;
     const response = await fetch(
@@ -133,6 +144,11 @@ app.get("/playlist-tracks/:playlistId", async (req, res) => {
     console.error("Error:", error);
     res.status(500).json({ error: "Failed to fetch playlist tracks" });
   }
+});
+
+// Serve Vue app for all other routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(3000, () => {
