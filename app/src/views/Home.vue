@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h1>Welcome to the home page</h1>
+    <h1 class="text-white font-bold">Welcome to the home page</h1>
     <div v-if="isAuthenticated">
-      <p>You are logged in!</p>
-      <router-link to="/playlists" class="nav-link">View Your Playlists</router-link>
+      <p class="text-white font-bold">You are logged in!</p>
+      <router-link to="/playlists" class="text-spotify-green font-bold">View Your Playlists</router-link>
     </div>
     <div v-else>
-      <p>Please log in to continue.</p>
-      <a href="http://localhost:3000/login">Login with Spotify</a>
+      <p class="text-white font-bold">Please log in to continue.</p>
+      <a href="http://localhost:3000/login" class="text-spotify-green font-bold">Login with Spotify</a>
     </div>
   </div>
 </template>
