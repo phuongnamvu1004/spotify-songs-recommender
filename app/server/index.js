@@ -75,7 +75,7 @@ async function refreshAccessToken(refresh_token) {
 // Auth-related routes - keep simple for Spotify OAuth
 app.get("/login", function (req, res) {
   const state = generateRandomString(16);
-  const scope = "user-read-private user-read-email playlist-read-private";
+  const scope = "user-read-private user-read-email playlist-read-private user-top-read";
 
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
@@ -162,6 +162,16 @@ app.get("/api/playlist-tracks/:playlistId", requireToken, async (req, res) => {
     console.error("Error:", error);
     res.status(500).json({ error: "Failed to fetch playlist tracks" });
   }
+});
+
+app.get("/api/top-tracks", requireToken, async (req, res) => {
+  const response = await fetch("https://api.spotify.com/v1/me/top/tracks", {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
+  const data = await response.json();
+  res.json(data);
 });
 
 // Remove the Vue serving middleware for now
