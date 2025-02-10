@@ -74,7 +74,7 @@ getTrackMetadata(trackId);
 - Model training: Ref: "https://github.com/madhavthaker/spotify-recommendation-system"
 
 ## Repo setup
-
+```plaintext
 app/
 ├── algorithm/
 │   ├── ALGORITHM_IDEA.md
@@ -95,7 +95,7 @@ app/
 │   ├── api.py              # FastAPI ML service
 ├── package.json
 ├── vite.config.js
-
+```
 
 **Steps:**
 - Step 1: Install Required Python Packages
