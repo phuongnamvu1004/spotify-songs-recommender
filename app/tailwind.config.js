@@ -1,7 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-  content: [],
+  content: [
+    "./index.html",
+    "./client/**/*.{vue,js,ts,jsx,tsx}",
+    "./client/**/*.vue",
+    "./client/views/**/*.vue",
+    "./client/components/**/*.vue"
+  ],
   theme: {
     extend: {
       colors: {
@@ -13,6 +18,6 @@ module.exports = {
         'spotify-dark-gray': '#121212',
       },
     },
-    plugins: [],
-  }
+  },
+  plugins: [],
 }
