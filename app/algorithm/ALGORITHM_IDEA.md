@@ -1,31 +1,37 @@
 # Data we have
-- 1,000,000 songs 
-- User's data:
-    + All playlists -> Playlist details in "/api/playlist-tracks/:playlistId"
-    + Top tracks -> In "/api/top-tracks"
--> From these tracks we can get the metadata like in this code
-```js
-const fetch = require('node-fetch');
 
-const accessToken = 'YOUR_SPOTIFY_ACCESS_TOKEN';
-const trackId = 'TRACK_ID';
+- 1,000,000 songs
+- User's data: + All playlists -> Playlist details in "/api/playlist-tracks/:playlistId" + Top tracks -> In "/api/top-tracks"
+  -> From these tracks we can get the metadata like in this code
+
+```js
+const fetch = require("node-fetch");
+
+const accessToken = "YOUR_SPOTIFY_ACCESS_TOKEN";
+const trackId = "TRACK_ID";
 
 async function getTrackMetadata(trackId) {
   try {
     // Get track information
-    const trackResponse = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const trackResponse = await fetch(
+      `https://api.spotify.com/v1/tracks/${trackId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     const trackData = await trackResponse.json();
 
     // Get audio features
-    const audioFeaturesResponse = await fetch(`https://api.spotify.com/v1/audio-features/${trackId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const audioFeaturesResponse = await fetch(
+      `https://api.spotify.com/v1/audio-features/${trackId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     const audioFeaturesData = await audioFeaturesResponse.json();
 
     // Combine track information and audio features
@@ -53,27 +59,31 @@ async function getTrackMetadata(trackId) {
 
     console.log(trackMetadata);
   } catch (error) {
-    console.error('Error fetching track metadata:', error);
+    console.error("Error fetching track metadata:", error);
   }
 }
 
 getTrackMetadata(trackId);
 ```
 
-# Rules set up
+# Rules setup
+
 ## First pass (filtered by user's preferences)
+
 - Selected criteria:
-    + Artists
-    + Genre
-    + Tempo 
-    + Year
-    + Energy level
-    + Duration (in ms)
+  - Artists
+  - Genre
+  - Tempo
+  - Year
+  - Energy level
+  - Duration (in ms)
 
 ## Second pass (training to find best match)
+
 - Model training: Ref: "https://github.com/madhavthaker/spotify-recommendation-system"
 
 ## Repo setup
+
 ```plaintext
 app/
 ├── algorithm/
@@ -97,12 +107,16 @@ app/
 ├── vite.config.js
 ```
 
-**Steps:**
+### Steps:
+
 - Step 1: Install Required Python Packages
-```bash 
+
+```bash
 pip install pandas numpy scikit-learn
 ```
+
 - Step 2: Training Script (`algorithm/train_model.py`)
+
 ```py
 import pandas as pd
 import numpy as np
@@ -125,7 +139,9 @@ with open("algorithm/model.pkl", "wb") as f:
 
 print("Model trained and saved successfully!")
 ```
+
 - Step 3: Modify API to Load Model (update `server/api.py` to use the trained model for recommendations)
+
 ```py
 from fastapi import FastAPI
 import pandas as pd
@@ -157,7 +173,7 @@ def recommend(request: RecommendationRequest):
 
     # Find the requested song in the dataset
     song = df[df["track_id"] == request.track_id]
-    if song.empty:
+    if song.empty:r
         return {"error": "Track not found"}
 
     # Get song features and find nearest neighbors
@@ -169,7 +185,9 @@ def recommend(request: RecommendationRequest):
 
     return {"track_id": request.track_id, "recommendations": recommended_songs}
 ```
+
 - Step 4: Updating `package.json` to Run fastAPI alongside Node.js
+
 ```js
 "scripts": {
   "dev": "concurrently \"nodemon server/index.js\" \"vite\" \"uvicorn server.api:app --reload --host 0.0.0.0 --port 8000\"",
@@ -177,13 +195,7 @@ def recommend(request: RecommendationRequest):
   "preview": "node index.js"
 }
 ```
+
 - Start Vue frontend at http://localhost:5173 (or another Vite port).
 - Start Node.js API at http://localhost:3000.
 - Start FastAPI recommendation engine at http://localhost:8000.
-
-
-
-
-
-
-
