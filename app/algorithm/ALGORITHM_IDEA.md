@@ -72,11 +72,35 @@ getTrackMetadata(trackId);
 
 - Selected criteria:
   - Artists
-  - Genre
+  - Genres
   - Tempo
   - Year
   - Energy level
   - Duration (in ms)
+
+- Preferences schemas:
+```ts
+interface Preferences {
+  artists: string[];
+  genres: string[];
+  year: {
+    start: number;
+    end: number;
+  };
+  duration: {
+    start: number;
+    end: number;
+  };
+  energyLevel: {
+    start: number;
+    end: number;
+  };
+  tempo: {
+    start: number;
+    end: number;
+  };
+}
+```
 
 ## Second pass (training to find best match)
 
