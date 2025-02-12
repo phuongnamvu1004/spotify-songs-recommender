@@ -1,14 +1,14 @@
 # vscode configs
-.vscode/
+app/.vscode/
 
 # exclude node modules
-node_modules/
+app/node_modules/
 
 # exclude spotify_data.csv (too large)
-db/spotify_data.csv
+app/db/spotify_data.csv
 
 # SpotifyAPI credentials
-.env
+app/.env
 
 # Python virtual environment
 venv/
