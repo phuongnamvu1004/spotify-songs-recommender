@@ -2,10 +2,10 @@
 module.exports = {
   content: [
     "./index.html",
-    "./client/**/*.{vue,js,ts,jsx,tsx}",
-    "./client/**/*.vue",
-    "./client/views/**/*.vue",
-    "./client/components/**/*.vue"
+    "./src/client/**/*.{vue,js,ts,jsx,tsx}",
+    "./src/client/**/*.vue",
+    "./src/client/views/**/*.vue",
+    "./src/client/components/**/*.vue"
   ],
   theme: {
     extend: {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"nodemon server/index.js\" \"vite\"",
+    "dev": "concurrently \"nodemon src/server/index.js\" \"vite\"",
     "build": "vite build",
     "preview": "node index.js",
     "test": "jest"
