@@ -6,7 +6,7 @@ from constants import PROJECT_ROOT
 
 # Extract necessary features (modify as needed)
 features = ["danceability", "energy", "loudness", "valence", "tempo"]
-X = sql_query(features, "spotify_db") 
+X = sql_query(features, "Songs") 
 
 # Train a kNN model for song recommendations
 model = NearestNeighbors(n_neighbors=10, algorithm="auto").fit(X)

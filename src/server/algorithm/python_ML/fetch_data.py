@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 import sys
 import os
 
+# Path to the .env file
 from constants import ENV_PATH
-
 
 try:
     # Load environment variables
@@ -39,7 +39,7 @@ try:
         if not table:
             raise ValueError("Table name cannot be empty")
             
-        query = f"SELECT {', '.join(select)} FROM {table} LIMIT {limit}"
+        query = f"SELECT {', '.join(select)} FROM \"{table}\" LIMIT {limit}"
         return pd.read_sql(query, engine)    
 
 except Exception as e:

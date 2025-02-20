@@ -12,3 +12,9 @@ src/server/db/spotify_data.csv
 
 # Python virtual environment
 venv/
+
+# Python cache
+__pycache__/
+
+# pytest cache
+.pytest_cache/

@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-from ..fetch_data import sql_query
+from src.server.algorithm.python_ML.fetch_data import sql_query
 
 def test_sql_query_returns_dataframe(mock_db_connection, sample_dataframe):
     # Arrange
@@ -8,7 +8,7 @@ def test_sql_query_returns_dataframe(mock_db_connection, sample_dataframe):
     features = ["danceability", "energy", "loudness", "valence", "tempo"]
     
     # Act
-    result = sql_query(features, "spotify_db", 3)
+    result = sql_query(features, "Songs", 3)
     
     # Assert
     assert isinstance(result, pd.DataFrame)
@@ -21,7 +21,7 @@ def test_sql_query_with_empty_features():
     
     # Act & Assert
     with pytest.raises(ValueError, match="Features list cannot be empty"):
-        sql_query(features, "spotify_db")
+        sql_query(features, "songs")
 
 def test_sql_query_with_invalid_table():
     # Arrange
