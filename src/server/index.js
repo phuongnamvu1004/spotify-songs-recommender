@@ -6,8 +6,11 @@ const path = require("path");
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
+
 // Update redirect_uri to match exactly what's in Spotify Dashboard
 const redirect_uri = "http://localhost:3000/callback";
+
+const { Song } = require("./db/schemas/songs");
 
 // User's access_token and refresh_token
 var access_token;
@@ -174,10 +177,48 @@ app.get("/api/top-tracks", requireToken, async (req, res) => {
   res.json(data);
 });
 
-// Remove the Vue serving middleware for now
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-// });
+// To fix: Read the data returned from "/api/playlist-tracks/:playlistId" and "/api/top-tracks"
+// and process the data to extract the audio features for each track.
+// Then, insert the processed data into the database using the Song model.
+// The processed data should include the audio features and other relevant track information.
+app.post("/api/process-tracks", requireToken, async (req, res) => {
+  try {
+    const { tracks } = req.body;
+    
+    // Get audio features for the batch
+    const trackIds = tracks.map(track => track.id);
+    const featuresResponse = await fetch(
+      `https://api.spotify.com/v1/audio-features?ids=${trackIds.join(',')}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      }
+    );
+    const featuresData = await featuresResponse.json();
+
+    // Process each track with its audio features
+    const processedTracks = tracks.map((track, index) => ({
+      artist_name: track.artists[0].name.substring(0, 255),
+      track_name: track.name.substring(0, 500),
+      track_id: track.id,
+      popularity: track.popularity,
+      duration_ms: track.duration_ms,
+      explicit: track.explicit,
+      ...featuresData.audio_features[index]
+    }));
+
+    // Batch insert into database
+    await Song.bulkCreate(processedTracks, {
+      ignoreDuplicates: true
+    });
+
+    res.json({ processed: processedTracks.length });
+  } catch (error) {
+    console.error('Processing error:', error);
+    res.status(500).json({ error: 'Failed to process tracks' });
+  }
+});
 
 app.listen(3000, () => {
   console.log("App is listening on port 3000...");

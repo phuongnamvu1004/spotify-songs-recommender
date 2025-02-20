@@ -1,6 +1,6 @@
+const { DataTypes } = require("sequelize");
 const { sequelize } = require("../setUpPostgres");
 
-// Define Song Model
 const Song = sequelize.define(
   "Song",
   {
@@ -9,6 +9,12 @@ const Song = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    // Store artists as a native PostgreSQL array
+    artists: {
+      type: DataTypes.ARRAY(DataTypes.STRING(500)),
+      allowNull: false,
+    },
+    // Keep artist_name for primary artist
     artist_name: {
       type: DataTypes.STRING(500),
       allowNull: false,
@@ -29,6 +35,12 @@ const Song = sequelize.define(
       type: DataTypes.INTEGER,
       validate: { min: 1900, max: new Date().getFullYear() },
     },
+    // Store genres as a native PostgreSQL array
+    genres: {
+      type: DataTypes.ARRAY(DataTypes.STRING(500)),
+      defaultValue: [],
+    },
+    // Keep genre for primary genre
     genre: {
       type: DataTypes.STRING(500),
     },
@@ -88,6 +100,9 @@ const Song = sequelize.define(
       { fields: ["artist_name"] },
       { fields: ["genre"] },
       { fields: ["year"] },
+      // Add GIN indexes for array fields for better performance
+      { using: 'GIN', fields: ['artists'] },
+      { using: 'GIN', fields: ['genres'] }
     ],
   }
 );
