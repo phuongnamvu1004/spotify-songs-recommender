@@ -14,7 +14,8 @@ src/server/db/spotify_data.csv
 venv/
 
 # Python cache
-__pycache__/
+src/server/algorithm/python_ML/__pycache__/
+src/server/algorithm/python_ML/tests/__pycache__
 
 # pytest cache
 .pytest_cache/
