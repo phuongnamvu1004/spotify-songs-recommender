@@ -8,19 +8,18 @@ const sequelize = new Sequelize("song_recommender_prj", "phuong-namvu", "", {
 
 // Define Song Model
 const Song = sequelize.define(
-  "Song",
+  "songs", // Use lowercase for table name
   {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
-      field: "id"
     },
     name: {
       type: DataTypes.STRING(500),
       allowNull: false,
     },
     artists: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(1000), // Increased length for array storage
       allowNull: false,
     },
     duration_ms: {
@@ -73,12 +72,23 @@ const Song = sequelize.define(
     }
   },
   {
-    tableName: "Songs", // Explicitly define the table name in lowercase
+    tableName: 'songs', // Force table name to be lowercase
+    timestamps: true, // Enable timestamps (createdAt, updatedAt)
+    underscored: true, // Use snake_case for column names
     indexes: [
       { fields: ["artists"] },
       { fields: ["year"] },
     ],
   }
 );
+
+// Force sync to recreate the table
+sequelize.sync({ force: true })
+  .then(() => {
+    console.log("Table created successfully!");
+  })
+  .catch((error) => {
+    console.error("Error creating table:", error);
+  });
 
 module.exports = { Song, sequelize };

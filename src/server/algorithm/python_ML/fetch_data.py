@@ -19,7 +19,7 @@ try:
     engine = create_engine(DATABASE_URL)
     
     # sql_query function to fetch data from the database
-    def sql_query(select: List[str], table: str, limit: int = 1000) -> pd.DataFrame:
+    def sql_query(select: List[str], table: str, limit: int = 200000) -> pd.DataFrame:
         """
         Fetch data from database
         

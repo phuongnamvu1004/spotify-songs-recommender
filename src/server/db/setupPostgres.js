@@ -2,22 +2,11 @@ const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const Papa = require("papaparse");
 
-// PostgreSQL Connection
-const sequelize = new Sequelize("song_recommender_prj", "phuong-namvu", "", {
-  host: "localhost",
-  dialect: "postgres",
-  port: 5432,
-  logging: false, // Disable logging SQL queries
-});
-
 // Import Song model after sequelize is defined to avoid circular dependency
-const { Song } = require("./schemas/songs");
+const { Song, sequelize } = require("./schemas/songs");
 
 async function importCsvToPostgres(csvFilePath) {
   try {
-    // Sync model (create table if not exists)
-    await sequelize.sync({ alter: true });
-
     // Read CSV
     const csvFile = fs.readFileSync(csvFilePath, "utf-8");
     const results = Papa.parse(csvFile, {
@@ -26,43 +15,46 @@ async function importCsvToPostgres(csvFilePath) {
       skipEmptyLines: true,
     });
 
-    // Define max lengths (adjust according to your schema)
-    const MAX_ARTIST_NAME_LENGTH = 255;
-    const MAX_TRACK_NAME_LENGTH = 500;
-
     // Batch insert
-    const batchSize = 1000;
+    const batchSize = 100; // Reduced batch size for testing
     for (let i = 0; i < results.data.length; i += batchSize) {
       const batch = results.data.slice(i, i + batchSize);
 
-      await Song.bulkCreate(
-        batch.map((row) => ({
-          id: row["id"],
-          name: typeof row["name"] === "string" ? row["name"].substring(0, MAX_TRACK_NAME_LENGTH) : "",
-          artists: typeof row["artists"] === "string" ? row["artists"].substring(0, MAX_ARTIST_NAME_LENGTH) : "",
-          duration_ms: row["duration_ms"],
-          release_date: row["release_date"],
-          year: row["year"],
-          acousticness: row["acousticness"],
-          danceability: row["danceability"],
-          energy: row["energy"],
-          instrumentalness: row["instrumentalness"],
-          liveness: row["liveness"],
-          loudness: row["loudness"],
-          speechiness: row["speechiness"],
-          tempo: row["tempo"],
-          valence: row["valence"],
-          mode: row["mode"],
-          key: row["key"],
-          popularity: row["popularity"],
-          explicit: row["explicit"],
-        })),
-        {
-          ignoreDuplicates: true,
-        }
-      );
+      try {
+        await Song.bulkCreate(
+          batch.map((row) => ({
+            id: row["id"],
+            name: row["name"],
+            artists: JSON.stringify(row["artists"]), // Convert array to string
+            duration_ms: row["duration_ms"],
+            release_date: row["release_date"],
+            year: row["year"],
+            acousticness: parseFloat(row["acousticness"]),
+            danceability: parseFloat(row["danceability"]),
+            energy: parseFloat(row["energy"]),
+            instrumentalness: parseFloat(row["instrumentalness"]),
+            liveness: parseFloat(row["liveness"]),
+            loudness: parseFloat(row["loudness"]),
+            speechiness: parseFloat(row["speechiness"]),
+            tempo: parseFloat(row["tempo"]),
+            valence: parseFloat(row["valence"]),
+            mode: parseInt(row["mode"]),
+            key: parseInt(row["key"]),
+            popularity: parseInt(row["popularity"]),
+            explicit: Boolean(row["explicit"]),
+          })),
+          {
+            ignoreDuplicates: true,
+          }
+        );
 
-      console.log(`Imported ${i + batch.length} / ${results.data.length} songs`);
+        console.log(
+          `Imported ${i + batch.length} / ${results.data.length} songs`
+        );
+      } catch (error) {
+        console.error("Error in batch:", error);
+        console.error("First row of failing batch:", batch[0]);
+      }
     }
 
     console.log("Import complete");
@@ -73,6 +65,9 @@ async function importCsvToPostgres(csvFilePath) {
   }
 }
 
-importCsvToPostgres("./spotify_data.csv");
+// Wait for table creation before importing data
+setTimeout(() => {
+  importCsvToPostgres("./spotify_data.csv");
+}, 1000);
 
 module.exports = { sequelize };
