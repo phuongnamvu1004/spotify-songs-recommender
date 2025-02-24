@@ -7,7 +7,7 @@ class SpotifyDataCollector {
   constructor(config) {
     this.serverUrl = config.serverUrl || "http://localhost:3000";
     this.maxSongs = config.maxSongs || 100000;
-    this.batchSize = config.batchSize || 100;
+    this.batchSize = config.batchSize || 50;
     this.fetchInterval = config.fetchInterval || 10000; // 10 seconds
     this.sequelize = config.sequelize;
     this.totalSongsFetched = 0;
@@ -39,8 +39,12 @@ class SpotifyDataCollector {
 
       const data = await response.json();
 
+      console.log(data.tracks.items);
+
       // Process tracks in batches
-      const tracks = data.items.map((item) => item.track);
+      const tracks = data.tracks.items.map((item) => item.track);
+
+      console.log(tracks);
 
       for (let i = 0; i < tracks.length; i += this.batchSize) {
         if (this.totalSongsFetched >= this.maxSongs) {

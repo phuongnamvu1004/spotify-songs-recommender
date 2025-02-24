@@ -12,15 +12,14 @@ const sequelize = new Sequelize("song_recommender_prj", "phuong-namvu", "", {
 const collector = new SpotifyDataCollector({
   serverUrl: 'http://localhost:3000',
   maxSongs: 100000,
-  batchSize: 100,
+  batchSize: 50,
   fetchInterval: 10000,
   sequelize
 });
 
 // Example playlist IDs - replace with your target playlists
 const playlistIds = [
-  '37i9dQZF1DXcBWIGoYBM5M',
-  '37i9dQZF1DX0XUsuxWHRQd'
+  '1MNbLcinctw1z7sypSFuaH',
 ];
 
 // Start collection - runs immediately and then daily at midnight

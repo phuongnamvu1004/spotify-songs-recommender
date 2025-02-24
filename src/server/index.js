@@ -19,7 +19,7 @@ var refresh_token;
 const app = express();
 
 // Simplify middleware for testing
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));  // Increase the JSON payload size limit
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Middleware to check for token
@@ -78,8 +78,7 @@ async function refreshAccessToken(refresh_token) {
 // Auth-related routes - keep simple for Spotify OAuth
 app.get("/login", function (req, res) {
   const state = generateRandomString(16);
-  const scope = "user-read-private user-read-email playlist-read-private user-top-read";
-
+  const scope = "user-read-private user-read-email playlist-read-private user-top-read playlist-read-collaborative playlist-modify-public playlist-modify-private user-library-read";
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
       querystring.stringify({
@@ -151,6 +150,36 @@ app.get("/api/get-playlists", requireToken, async (req, res) => {
 app.get("/api/playlist-tracks/:playlistId", requireToken, async (req, res) => {
   try {
     const playlistId = req.params.playlistId;
+    
+    // First, try to get playlist metadata to check access
+    const playlistResponse = await fetch(
+      `https://api.spotify.com/v1/playlists/${playlistId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+
+    if (playlistResponse.status === 403) {
+      return res.status(403).json({ 
+        error: "This playlist is private. You don't have permission to access it.",
+        details: "The playlist owner needs to make it public or collaborate with you."
+      });
+    }
+
+    if (playlistResponse.status === 404) {
+      return res.status(404).json({ 
+        error: "Playlist not found",
+        details: "The playlist might have been deleted or the ID is incorrect."
+      });
+    }
+
+    if (!playlistResponse.ok) {
+      throw new Error(`HTTP error! status: ${playlistResponse.status}`);
+    }
+
+    // If we can access the playlist, get its tracks
     const response = await fetch(
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
       {
@@ -159,11 +188,32 @@ app.get("/api/playlist-tracks/:playlistId", requireToken, async (req, res) => {
         },
       }
     );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const data = await response.json();
-    res.json(data);
+
+    // Transform the response to include playlist accessibility info
+    const playlistData = await playlistResponse.json();
+    res.json({
+      tracks: data,
+      playlist_info: {
+        name: playlistData.name,
+        owner: playlistData.owner.display_name,
+        is_public: playlistData.public,
+        collaborative: playlistData.collaborative,
+        total_tracks: playlistData.tracks.total
+      }
+    });
+
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Failed to fetch playlist tracks" });
+    res.status(500).json({ 
+      error: "Failed to fetch playlist tracks",
+      details: error.message
+    });
   }
 });
 
@@ -184,29 +234,50 @@ app.get("/api/top-tracks", requireToken, async (req, res) => {
 app.post("/api/process-tracks", requireToken, async (req, res) => {
   try {
     const { tracks } = req.body;
+
+    // Log first track for debugging
+    console.log(tracks.slice(0, 1));
     
     // Get audio features for the batch
-    const trackIds = tracks.map(track => track.id);
+    const trackIds = tracks.map(track => track.id).slice(0, 1);
+    console.log(trackIds.slice(0, 1));
+    
     const featuresResponse = await fetch(
       `https://api.spotify.com/v1/audio-features?ids=${trackIds.join(',')}`,
       {
         headers: {
-          Authorization: `Bearer ${access_token}`
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json"
         }
       }
     );
+
+    if (!featuresResponse.ok) {
+      const errorData = await featuresResponse.json();
+      console.error('Error fetching audio features:', errorData);
+      return res.status(featuresResponse.status).json({ error: 'Failed to fetch audio features', details: errorData });
+    }
+
     const featuresData = await featuresResponse.json();
+    console.log(featuresData);
 
     // Process each track with its audio features
-    const processedTracks = tracks.map((track, index) => ({
-      artist_name: track.artists[0].name.substring(0, 255),
-      track_name: track.name.substring(0, 500),
-      track_id: track.id,
-      popularity: track.popularity,
-      duration_ms: track.duration_ms,
-      explicit: track.explicit,
-      ...featuresData.audio_features[index]
-    }));
+    const processedTracks = tracks.map((track, index) => {
+      const audioFeatures = featuresData.audio_features[index];
+      if (!audioFeatures) {
+        console.warn(`No audio features found for track ID: ${track.id}`);
+        return null;
+      }
+      return {
+        artist_name: track.artists[0].name.substring(0, 255),
+        track_name: track.name.substring(0, 500),
+        track_id: track.id,
+        popularity: track.popularity,
+        duration_ms: track.duration_ms,
+        explicit: track.explicit,
+        ...audioFeatures
+      };
+    }).filter(track => track !== null);
 
     // Batch insert into database
     await Song.bulkCreate(processedTracks, {
