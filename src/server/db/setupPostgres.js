@@ -1,7 +1,6 @@
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const Papa = require("papaparse");
-const { Song } = require("./schemas/songs");
 
 // PostgreSQL Connection
 const sequelize = new Sequelize("song_recommender_prj", "phuong-namvu", "", {
@@ -10,6 +9,9 @@ const sequelize = new Sequelize("song_recommender_prj", "phuong-namvu", "", {
   port: 5432,
   logging: false, // Disable logging SQL queries
 });
+
+// Import Song model after sequelize is defined to avoid circular dependency
+const { Song } = require("./schemas/songs");
 
 async function importCsvToPostgres(csvFilePath) {
   try {
@@ -35,40 +37,32 @@ async function importCsvToPostgres(csvFilePath) {
 
       await Song.bulkCreate(
         batch.map((row) => ({
-          artist_name:
-            typeof row["artist_name"] === "string"
-              ? row["artist_name"].substring(0, 255)
-              : "",
-          track_name:
-            typeof row["track_name"] === "string"
-              ? row["track_name"].substring(0, 500)
-              : "",
-          track_id: row["track_id"],
-          popularity: row["popularity"],
+          id: row["id"],
+          name: typeof row["name"] === "string" ? row["name"].substring(0, MAX_TRACK_NAME_LENGTH) : "",
+          artists: typeof row["artists"] === "string" ? row["artists"].substring(0, MAX_ARTIST_NAME_LENGTH) : "",
+          duration_ms: row["duration_ms"],
+          release_date: row["release_date"],
           year: row["year"],
-          genre: row["genre"],
+          acousticness: row["acousticness"],
           danceability: row["danceability"],
           energy: row["energy"],
-          key: row["key"],
-          loudness: row["loudness"],
-          mode: row["mode"],
-          speechiness: row["speechiness"],
-          acousticness: row["acousticness"],
           instrumentalness: row["instrumentalness"],
           liveness: row["liveness"],
-          valence: row["valence"],
+          loudness: row["loudness"],
+          speechiness: row["speechiness"],
           tempo: row["tempo"],
-          duration_ms: row["duration_ms"],
-          time_signature: row["time_signature"],
+          valence: row["valence"],
+          mode: row["mode"],
+          key: row["key"],
+          popularity: row["popularity"],
+          explicit: row["explicit"],
         })),
         {
           ignoreDuplicates: true,
         }
       );
 
-      console.log(
-        `Imported ${i + batch.length} / ${results.data.length} songs`
-      );
+      console.log(`Imported ${i + batch.length} / ${results.data.length} songs`);
     }
 
     console.log("Import complete");

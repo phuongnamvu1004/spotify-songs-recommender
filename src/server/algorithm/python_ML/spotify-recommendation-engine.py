@@ -1,19 +1,27 @@
-from sklearn.neighbors import NearestNeighbors
-import pickle
-import os
+import pandas as pd
+import numpy as np
+import json
+import re 
+import sys
+import itertools
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
+
 from fetch_data import sql_query
-from constants import PROJECT_ROOT
 
-# Extract necessary features (modify as needed)
-features = ["danceability", "energy", "loudness", "valence", "tempo"]
-X = sql_query(features, "Songs") 
+df = sql_query(["acousticness", "artist_name", "danceability", "duration_ms", "energy", "track_id", "instrumentalness", "key", "liveness", "loudness", "mode", "track_name", "popularity", "speechiness", "tempo", "valence", "year", "genre"], "Songs", 10000)
 
-# Train a kNN model for song recommendations
-model = NearestNeighbors(n_neighbors=10, algorithm="auto").fit(X)
+print(df.head())
 
-# Save the trained model using absolute path
-model_path = os.path.join(PROJECT_ROOT, "src/server/algorithm/python_ML/model.pkl")
-with open(model_path, "wb") as f:
-    pickle.dump(model, f)
+"""
+Observations:
+1. This data is at a song level
+2. Many numerical values that I'll be able to use to compare movies (liveness, tempo, valence, etc)
+3. "Year" will useful but I'll need to create a OHE variable for release date in 5 year increments
+4. Similar to 2, I'll need to create OHE variables for the popularity. I'll also use 5 year increments here
+"""
 
-print(f"Model trained and saved successfully at {model_path}!")
+print(df.dtypes)
