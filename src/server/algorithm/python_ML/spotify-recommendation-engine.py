@@ -62,10 +62,87 @@ artists_exploded = spotify_df[['artists_upd','id']].explode('artists_upd')
 # print(artists_exploded.head(10))
 # print(spotify_df["artists_song"].head())
 
-### Feature Engineering
+### 2. Feature Engineering
 """
 1. Normalize float variables
 2. OHE Year and Popularity Variables
 3. Create TF-IDF features off of artist genres
 """
+# spotify_df['year'] = spotify_df['release_date'].apply(lambda x: x.split('/')[0])
+
+float_cols = spotify_df.dtypes[spotify_df.dtypes == 'float64'].index.values
+
+ohe_cols = 'popularity'
+
+# print(spotify_df['popularity'].describe())
+
+# create 5 point buckets for popularity 
+spotify_df['popularity_red'] = spotify_df['popularity'].apply(lambda x: int(x/5))
+
+# print(spotify_df.head())
+
+#simple function to create OHE features
+#this gets passed later on
+def ohe_prep(df, column, new_name): 
+    """ 
+    Create One Hot Encoded features of a specific column
+
+    Parameters: 
+        df (pandas dataframe): Spotify Dataframe
+        column (str): Column to be processed
+        new_name (str): new column name to be used
+        
+    Returns: 
+        tf_df: One hot encoded features 
+    """
+    
+    tf_df = pd.get_dummies(df[column])
+    feature_names = tf_df.columns
+    tf_df.columns = [new_name + "|" + str(i) for i in feature_names]
+    tf_df.reset_index(drop = True, inplace = True)    
+    return tf_df
+
+#function to build entire feature set
+def create_feature_set(df, float_cols):
+    """ 
+    Process spotify df to create a final set of features that will be used to generate recommendations
+
+    Parameters: 
+        df (pandas dataframe): Spotify Dataframe
+        float_cols (list(str)): List of float columns that will be scaled 
+        
+    Returns: 
+        final: final set of features 
+    """
+    
+    #tfidf genre lists
+    # tfidf = TfidfVectorizer()
+    # tfidf_matrix =  tfidf.fit_transform(df['consolidates_genre_lists'].apply(lambda x: " ".join(x)))
+    # genre_df = pd.DataFrame(tfidf_matrix.toarray())
+    # genre_df.columns = ['genre' + "|" + i for i in tfidf.get_feature_names()]
+    # genre_df.reset_index(drop = True, inplace=True)
+
+    #explicity_ohe = ohe_prep(df, 'explicit','exp')    
+    year_ohe = ohe_prep(df, 'year','year') * 0.5
+    popularity_ohe = ohe_prep(df, 'popularity_red','pop') * 0.15
+
+    #scale float columns
+    floats = df[float_cols].reset_index(drop = True)
+    scaler = MinMaxScaler()
+    floats_scaled = pd.DataFrame(scaler.fit_transform(floats), columns = floats.columns) * 0.2
+
+    #concanenate all features
+    # final = pd.concat([genre_df, floats_scaled, popularity_ohe, year_ohe], axis = 1)
+    final = pd.concat([floats_scaled, popularity_ohe, year_ohe], axis = 1)
+     
+    #add song id
+    final['id']=df['id'].values
+    
+    return final
+
+print(spotify_df['year'].head())
+complete_feature_set = create_feature_set(spotify_df, float_cols=float_cols)
+print(complete_feature_set.head())
+
+### 3. Fetching user data from SpotifyAPI
 
