@@ -11,6 +11,15 @@ from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 
 from fetch_data import sql_query
+import requests
+
+from dotenv import load_dotenv
+import os
+# Load environment variables from .env file
+load_dotenv(os.path.join(os.path.dirname(__file__), '../../../config/.env'))
+
+# Get the access token from environment variables
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 
 ### 1. Data Exploration/Preparation
 
@@ -44,7 +53,7 @@ spotify_df['artists_upd_v2'] = spotify_df['artists'].apply(lambda x: re.findall(
 spotify_df['artists_upd'] = np.where(spotify_df['artists_upd_v1'].apply(lambda x: not x), spotify_df['artists_upd_v2'], spotify_df['artists_upd_v1'])
 
 # need to create my own song identifier because there are duplicates of the same song with different ids
-spotify_df['artists_song'] = spotify_df.apply(lambda row: row['artists_upd'][0]+row['name'],axis = 1)
+spotify_df['artists_song'] = spotify_df.apply(lambda row: row['artists_upd'][0]+row['name'], axis = 1)
 
 spotify_df.sort_values(['artists_song','release_date'], ascending = False, inplace = True)
 
@@ -140,9 +149,21 @@ def create_feature_set(df, float_cols):
     
     return final
 
-print(spotify_df['year'].head())
 complete_feature_set = create_feature_set(spotify_df, float_cols=float_cols)
-print(complete_feature_set.head())
+# print(complete_feature_set.head())
 
 ### 3. Fetching user data from SpotifyAPI
 
+def fetch_user_playlists():
+    url = "http://localhost:3000/api/get-playlists"
+    headers = {
+        'Authorization': f'Bearer {ACCESS_TOKEN}'  # You need to pass the token somehow
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()
+
+user_playlists = fetch_user_playlists()
+print(user_playlists)

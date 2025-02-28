@@ -11,6 +11,7 @@ const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = "http://localhost:3000/callback";
 
 const { Song } = require("./db/schemas/songs");
+const fs = require('fs');
 
 // User's access_token and refresh_token
 var access_token;
@@ -118,6 +119,8 @@ app.get("/callback", function (req, res) {
 
     request.post(authOptions, function (error, response, body) {
       if (!error && response.statusCode === 200) {
+        const envPath = path.join(__dirname, 'algorithm/python_ML/config/.env');
+        fs.appendFileSync(envPath, `ACCESS_TOKEN="${body.access_token}"\n`);
         access_token = body.access_token;
         refresh_token = body.refresh_token;
 
