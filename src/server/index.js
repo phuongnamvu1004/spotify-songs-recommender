@@ -124,6 +124,7 @@ app.get("/callback", function (req, res) {
         let envContent = fs.readFileSync(envPath, 'utf8');
         envContent = envContent.replace(/ACCESS_TOKEN=".*"/, `ACCESS_TOKEN="${body.access_token}"`);
         fs.writeFileSync(envPath, envContent);
+        
         access_token = body.access_token;
         refresh_token = body.refresh_token;
 
