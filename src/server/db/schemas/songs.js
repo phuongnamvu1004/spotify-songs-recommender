@@ -82,13 +82,13 @@ const Song = sequelize.define(
   }
 );
 
-// Force sync to recreate the table
-sequelize.sync({ force: true })
-  .then(() => {
-    console.log("Table created successfully!");
-  })
-  .catch((error) => {
-    console.error("Error creating table:", error);
-  });
+// // Force sync to recreate the table
+// sequelize.sync({ force: true })
+//   .then(() => {
+//     console.log("Table created successfully!");
+//   })
+//   .catch((error) => {
+//     console.error("Error creating table:", error);
+//   });
 
 module.exports = { Song, sequelize };

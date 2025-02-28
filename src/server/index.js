@@ -119,8 +119,11 @@ app.get("/callback", function (req, res) {
 
     request.post(authOptions, function (error, response, body) {
       if (!error && response.statusCode === 200) {
+        // Update the access token in the .env file
         const envPath = path.join(__dirname, 'algorithm/python_ML/config/.env');
-        fs.appendFileSync(envPath, `ACCESS_TOKEN="${body.access_token}"\n`);
+        let envContent = fs.readFileSync(envPath, 'utf8');
+        envContent = envContent.replace(/ACCESS_TOKEN=".*"/, `ACCESS_TOKEN="${body.access_token}"`);
+        fs.writeFileSync(envPath, envContent);
         access_token = body.access_token;
         refresh_token = body.refresh_token;
 
