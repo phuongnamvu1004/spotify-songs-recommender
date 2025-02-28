@@ -166,4 +166,7 @@ def fetch_user_playlists():
         response.raise_for_status()
 
 user_playlists = fetch_user_playlists()
-print(user_playlists)
+for playlist in user_playlists.items():
+    print(playlist)
+    print()
+    # You can add more details as needed
