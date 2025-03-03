@@ -1,14 +1,9 @@
 import pandas as pd
 import numpy as np
-import json
 import re 
-import sys
-import itertools
 
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import MinMaxScaler
-import matplotlib.pyplot as plt
 
 from fetch_data import sql_query
 import requests
@@ -145,7 +140,7 @@ def create_feature_set(df, float_cols):
     final = pd.concat([floats_scaled, popularity_ohe, year_ohe], axis = 1)
      
     #add song id
-    final['id']=df['id'].values
+    final['id'] = df['id'].values
     
     return final
 
@@ -212,17 +207,15 @@ def create_necessary_outputs(playlist_name, id_dic, df):
     
     return playlist
 
-
 id_dic = {playlist['name']: playlist['id'] for playlist in user_playlists['items']}
 
-# for playlist_name in playlist_names:
-#     playlist = create_necessary_outputs(playlist_name, id_dic, spotify_df)
-#     print(f"Necessary outputs for {playlist_name}")
-#     print(playlist)
-#     print()
-
-playlist_soul = create_necessary_outputs('for the soul', id_dic, spotify_df)
-# print(playlist_soul)
+all_songs_in_playlists = pd.DataFrame()
+for playlist_name in playlist_names:
+    playlist = create_necessary_outputs(playlist_name, id_dic, spotify_df)
+    all_songs_in_playlists = pd.concat([all_songs_in_playlists, playlist])
+    # print(f"Necessary outputs for {playlist_name}")
+    # print(playlist)
+    # print()
 
 ### 4. Create playlist vectors
     
@@ -261,8 +254,7 @@ def generate_playlist_feature(complete_feature_set, playlist_df, weight_factor):
     
     return playlist_feature_set_weighted_final.sum(axis = 0), complete_feature_set_nonplaylist
 
-
-complete_feature_set_playlist_vector_soul, complete_feature_set_nonplaylist_soul = generate_playlist_feature(complete_feature_set, playlist_soul, 1.09)
+complete_feature_set_playlist_vector_all, complete_feature_set_nonplaylist_all = generate_playlist_feature(complete_feature_set, all_songs_in_playlists, 1.09)
 
 # print(complete_feature_set_playlist_vector_soul.shape)
 
@@ -277,16 +269,16 @@ def generate_playlist_recos(df, features, nonplaylist_features):
         nonplaylist_features (pandas dataframe): feature set of songs that are not in the selected playlist
         
     Returns: 
-        non_playlist_df_top_40: Top 40 recommendations for that playlist
+        non_playlist_df_top_50: Top 50 recommendations for that playlist
     """
     
     non_playlist_df = df[df['id'].isin(nonplaylist_features['id'].values)]
     non_playlist_df['sim'] = cosine_similarity(nonplaylist_features.drop('id', axis = 1).values, features.values.reshape(1, -1))[:,0]
-    non_playlist_df_top_40 = non_playlist_df.sort_values('sim',ascending = False).head(40)
-    non_playlist_df_top_40['url'] = non_playlist_df_top_40['id'].apply(lambda x: sp.track(x)['album']['images'][1]['url'])
+    non_playlist_df_top_50 = non_playlist_df.sort_values('sim',ascending = False).head(50)
+    # non_playlist_df_top_40['url'] = non_playlist_df_top_40['id'].apply(lambda x: sp.track(x)['album']['images'][1]['url'])
     
-    return non_playlist_df_top_40
+    return non_playlist_df_top_50
 
-soul_top40 = generate_playlist_recos(spotify_df, complete_feature_set_playlist_vector_soul, complete_feature_set_nonplaylist_soul)
+top50 = generate_playlist_recos(spotify_df, complete_feature_set_playlist_vector_all, complete_feature_set_nonplaylist_all)
 
-print(soul_top40)
+print(top50)
