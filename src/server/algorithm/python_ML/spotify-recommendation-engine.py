@@ -281,4 +281,18 @@ def generate_playlist_recos(df, features, nonplaylist_features):
 
 top50 = generate_playlist_recos(spotify_df, complete_feature_set_playlist_vector_all, complete_feature_set_nonplaylist_all)
 
+def export_recommendations(recommendations):
+    url = "http://localhost:3000/api/export-recommendations"
+    headers = {
+        'Authorization': f'Bearer {ACCESS_TOKEN}',
+        'Content-Type': 'application/json'
+    }
+    response = requests.post(url, headers=headers, json=recommendations)
+    if response.status_code == 200:
+        print("Recommendations exported successfully.")
+    else:
+        response.raise_for_status()
+
+export_recommendations(top50.to_dict(orient='records'))
+
 print(top50)
