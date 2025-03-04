@@ -2,12 +2,18 @@ const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const Papa = require("papaparse");
 
-// Import Song model after sequelize is defined to avoid circular dependency
+// Import Song model and sequelize instance
 const { Song, sequelize } = require("./schemas/songs");
 
 async function importCsvToPostgres(csvFilePath) {
   try {
-    // Read CSV
+    // First, ensure the table exists by syncing the model
+    console.log("Creating database table...");
+    await sequelize.sync({ force: true }); // force: true will drop and recreate the table
+    console.log("Table created successfully!");
+
+    // Now read and import the CSV data
+    console.log("Reading CSV file...");
     const csvFile = fs.readFileSync(csvFilePath, "utf-8");
     const results = Papa.parse(csvFile, {
       header: true,
@@ -16,7 +22,7 @@ async function importCsvToPostgres(csvFilePath) {
     });
 
     // Batch insert
-    const batchSize = 100; // Reduced batch size for testing
+    const batchSize = 100;
     for (let i = 0; i < results.data.length; i += batchSize) {
       const batch = results.data.slice(i, i + batchSize);
 
@@ -25,7 +31,7 @@ async function importCsvToPostgres(csvFilePath) {
           batch.map((row) => ({
             id: row["id"],
             name: row["name"],
-            artists: JSON.stringify(row["artists"]), // Convert array to string
+            artists: JSON.stringify(row["artists"]),
             duration_ms: row["duration_ms"],
             release_date: row["release_date"],
             year: row["year"],
@@ -65,9 +71,7 @@ async function importCsvToPostgres(csvFilePath) {
   }
 }
 
-// Wait for table creation before importing data
-setTimeout(() => {
-  importCsvToPostgres("./spotify_data.csv");
-}, 1000);
+// Execute immediately without setTimeout
+importCsvToPostgres("./spotify_data.csv").catch(console.error);
 
 module.exports = { sequelize };
