@@ -1,8 +1,6 @@
 <template>
   <div class="relative min-h-screen bg-gray-800 flex items-center justify-between">
-
     <div class="absolute top-0 left-0 right-0 flex justify-between items-center p-6">
-
       <div class="flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 512 512" fill="#1DB954">
           <path
