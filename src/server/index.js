@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const querystring = require("querystring");
 const request = require("request");
+const { spawn } = require("child_process");
 const path = require("path");
 
 const client_id = process.env.CLIENT_ID;
@@ -10,7 +11,7 @@ const client_secret = process.env.CLIENT_SECRET;
 // Update redirect_uri to match exactly what's in Spotify Dashboard
 const redirect_uri = "http://localhost:3000/callback";
 
-const { Song } = require("./db/schemas/songs");
+// const { Song } = require("./db/schemas/songs");
 const fs = require('fs');
 
 // User's access_token and refresh_token
@@ -185,46 +186,56 @@ app.get("/api/top-tracks", requireToken, async (req, res) => {
   res.json(data);
 });
 
-// To fix: Read the data returned from "/api/playlist-tracks/:playlistId" and "/api/top-tracks"
-// and process the data to extract the audio features for each track.
-// Then, insert the processed data into the database using the Song model.
-// The processed data should include the audio features and other relevant track information.
-app.post("/api/process-tracks", requireToken, async (req, res) => {
+// Route to get recommended songs
+app.get("/api/recommended-songs", requireToken, async (req, res) => {
   try {
-    const { tracks } = req.body;
-    
-    // Get audio features for the batch
-    const trackIds = tracks.map(track => track.id);
-    const featuresResponse = await fetch(
-      `https://api.spotify.com/v1/audio-features?ids=${trackIds.join(',')}`,
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      }
-    );
-    const featuresData = await featuresResponse.json();
+    // Run the Python script
+    const pythonProcess = spawn("python3", [
+      path.join(__dirname, "algorithm/python_ML/spotify-recommendation-engine.py")
+    ]);
 
-    // Process each track with its audio features
-    const processedTracks = tracks.map((track, index) => ({
-      artist_name: track.artists[0].name.substring(0, 255),
-      track_name: track.name.substring(0, 500),
-      track_id: track.id,
-      popularity: track.popularity,
-      duration_ms: track.duration_ms,
-      explicit: track.explicit,
-      ...featuresData.audio_features[index]
-    }));
+    let scriptOutput = "";
 
-    // Batch insert into database
-    await Song.bulkCreate(processedTracks, {
-      ignoreDuplicates: true
+    pythonProcess.stdout.on("data", (data) => {
+      scriptOutput += data.toString();
     });
 
-    res.json({ processed: processedTracks.length });
+    pythonProcess.stderr.on("data", (data) => {
+      console.error(`stderr: ${data}`);
+    });
+
+    pythonProcess.on("close", async (code) => {
+      if (code !== 0) {
+        return res.status(500).json({ error: "Python script failed" });
+      }
+
+      try {
+        // Parse the output from the Python script
+        const result = JSON.parse(scriptOutput);
+        // Batch fetch tracks from Spotify API
+        const trackIds = result.map(track => track.id).join(',');
+        const response = await fetch(`https://api.spotify.com/v1/tracks?ids=${trackIds}`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          }
+        });
+        const data = await response.json();
+
+        // Map the image URLs to the original tracks
+        const updatedTracks = result.map((track, index) => ({
+          ...track,
+          imgURL: data.tracks[index].album.images[0]?.url
+        }));
+        
+        res.json(updatedTracks);
+      } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Failed to process recommended songs" });
+      }
+    });
   } catch (error) {
-    console.error('Processing error:', error);
-    res.status(500).json({ error: 'Failed to process tracks' });
+    console.error("Error:", error);
+    res.status(500).json({ error: "Failed to process recommended songs" });
   }
 });
 
