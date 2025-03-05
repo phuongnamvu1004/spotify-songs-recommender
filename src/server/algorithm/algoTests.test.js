@@ -4,7 +4,6 @@ import { filterByPreferences } from './filterByPreferences.js';
 const mockSongs = [
   {
     artist_name: 'The Beatles',
-    genre: 'rock',
     year: 2013,
     duration_ms: 250000,
     energy: 0.8,
@@ -12,7 +11,6 @@ const mockSongs = [
   },
   {
     artist_name: 'The Who',
-    genre: 'pop',
     year: 2014,
     duration_ms: 280000,
     energy: 0.7,
@@ -20,7 +18,6 @@ const mockSongs = [
   },
   {
     artist_name: 'Taylor Swift',
-    genre: 'pop',
     year: 2016,
     duration_ms: 180000,
     energy: 0.9,
@@ -30,7 +27,6 @@ const mockSongs = [
 
 const examplePreferences = {
   artists: ['The Beatles', 'The Rolling Stones', 'The Who'],
-  genres: ['rock', 'pop'],
   year: {
     start: 2012,
     end: 2015
