@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const session = require('express-session');
 const querystring = require("querystring");
 const request = require("request");
 const { spawn } = require("child_process");
@@ -24,6 +25,12 @@ app.set('spotify_access_token', access_token);
 // Simplify middleware for testing
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
+app.use(session({
+  secret: 'spotify-recommendation-secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 3600000 } // 1 hour
+}));
 
 // Middleware to check for token
 const requireToken = async (req, res, next) => {
@@ -236,6 +243,27 @@ app.get("/api/recommended-songs", requireToken, async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Failed to process recommended songs" });
+  }
+});
+
+// Add a new endpoint to store user preferences
+app.post("/api/preferences", requireToken, (req, res) => {
+  try {
+    // Store preferences in the session
+    if (!req.session.userData) {
+      req.session.userData = {};
+    }
+    
+    // Save the preferences from the request body
+    req.session.userData.preferences = req.body;
+    
+    res.json({ 
+      success: true, 
+      message: 'Preferences saved successfully' 
+    });
+  } catch (error) {
+    console.error("Error saving preferences:", error);
+    res.status(500).json({ error: "Failed to save preferences" });
   }
 });
 
