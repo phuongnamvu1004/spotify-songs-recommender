@@ -16,8 +16,8 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '../../../config/.env'))
 # Get the access token from environment variables
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 
-### 1. Data Exploration/Preparation
 def main():
+    ### 1. Data Exploration/Preparation
     spotify_df = sql_query([
         "acousticness", 
         "artists", 
@@ -274,6 +274,7 @@ def main():
         
         non_playlist_df = df[df['id'].isin(nonplaylist_features['id'].values)]
         non_playlist_df['sim'] = cosine_similarity(nonplaylist_features.drop('id', axis = 1).values, features.values.reshape(1, -1))[:,0]
+        # non_playlist_df_top_50 = non_playlist_df.sort_values('sim',ascending = False).head(50)
         non_playlist_df_top_50 = non_playlist_df.sort_values('sim',ascending = False).head(50)
         # non_playlist_df_top_40['url'] = non_playlist_df_top_40['id'].apply(lambda x: sp.track(x)['album']['images'][1]['url'])
         

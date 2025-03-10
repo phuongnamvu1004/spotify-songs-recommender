@@ -5,15 +5,13 @@ const querystring = require("querystring");
 const request = require("request");
 const { spawn } = require("child_process");
 const path = require("path");
+const fs = require('fs');
 
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 
 // Update redirect_uri to match exactly what's in Spotify Dashboard
 const redirect_uri = "http://localhost:3000/callback";
-
-// const { Song } = require("./db/schemas/songs");
-const fs = require('fs');
 
 // User's access_token and refresh_token
 var access_token;
@@ -264,6 +262,17 @@ app.post("/api/preferences", requireToken, (req, res) => {
   } catch (error) {
     console.error("Error saving preferences:", error);
     res.status(500).json({ error: "Failed to save preferences" });
+  }
+});
+
+app.get("/api/preferences", requireToken, (req, res) => {
+  try {
+    // Retrieve preferences from the session
+    const preferences = req.session.userData?.preferences || {};
+    res.json(preferences);
+  } catch (error) {
+    console.error("Error retrieving preferences:", error);
+    res.status(500).json({ error: "Failed to retrieve preferences" });
   }
 });
 

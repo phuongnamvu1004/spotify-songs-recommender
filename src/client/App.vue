@@ -43,8 +43,8 @@
             Home
           </a>
         </router-link>
-        <router-link to="/playlists"
-          ><a href="#" class="flex items-center hover:text-gray-300">
+        <router-link to="/playlists">
+          <a href="#" class="flex items-center hover:text-gray-300">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
