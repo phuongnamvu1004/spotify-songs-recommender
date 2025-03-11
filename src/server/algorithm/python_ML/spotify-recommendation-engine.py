@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re 
+import sys
 
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import MinMaxScaler
@@ -13,11 +14,11 @@ import os
 # Load environment variables from .env file
 load_dotenv(os.path.join(os.path.dirname(__file__), '../../../config/.env'))
 
-# Get the access token from environment variables
-ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+# Get the access token from command line arguments
+ACCESS_TOKEN = sys.argv[1]
 
-### 1. Data Exploration/Preparation
 def main():
+    ### 1. Data Exploration/Preparation
     spotify_df = sql_query([
         "acousticness", 
         "artists", 
@@ -150,15 +151,31 @@ def main():
     ### 3. Fetching user data from SpotifyAPI
 
     ## Fetching user playlists
+    # def fetch_user_playlists():
+    #     url = "http://localhost:3000/api/get-playlists"
+    #     headers = {
+    #         'Authorization': f'Bearer {ACCESS_TOKEN}'  # Use the passed token
+    #     }
+    #     response = requests.get(url, headers=headers)
+    #     if response.status_code == 200:
+    #         return response.json()
+    #     else:
+    #         print("Error fetching playlists:", response.status_code, response.text)  # Log the error
+    #         response.raise_for_status()
+    
     def fetch_user_playlists():
-        url = "http://localhost:3000/api/get-playlists"
+        # Call Spotify API directly instead of going through Express
+        url = "https://api.spotify.com/v1/me/playlists"
         headers = {
-            'Authorization': f'Bearer {ACCESS_TOKEN}'  # You need to pass the token somehow
+            'Authorization': f'Bearer {ACCESS_TOKEN}'
         }
+                
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             return response.json()
         else:
+            print(f"Error fetching playlists: {response.status_code}")
+            print(f"Response text: {response.text}")
             response.raise_for_status()
 
     user_playlists = fetch_user_playlists()
@@ -166,14 +183,17 @@ def main():
     # print(playlist_names)
 
     def fetch_playlist_tracks(playlist_id):
-        url = f"http://localhost:3000/api/playlist-tracks/{playlist_id}"
+        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
         headers = {
-            'Authorization': f'Bearer {ACCESS_TOKEN}'  
+            'Authorization': f'Bearer {ACCESS_TOKEN}'
         }
+        
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             return response.json()
         else:
+            print(f"Error fetching playlist tracks: {response.status_code}")
+            print(f"Response text: {response.text}")
             response.raise_for_status()
         
     def create_necessary_outputs(playlist_name, id_dic, df):
@@ -274,6 +294,7 @@ def main():
         
         non_playlist_df = df[df['id'].isin(nonplaylist_features['id'].values)]
         non_playlist_df['sim'] = cosine_similarity(nonplaylist_features.drop('id', axis = 1).values, features.values.reshape(1, -1))[:,0]
+        # non_playlist_df_top_50 = non_playlist_df.sort_values('sim',ascending = False).head(50)
         non_playlist_df_top_50 = non_playlist_df.sort_values('sim',ascending = False).head(50)
         # non_playlist_df_top_40['url'] = non_playlist_df_top_40['id'].apply(lambda x: sp.track(x)['album']['images'][1]['url'])
         
