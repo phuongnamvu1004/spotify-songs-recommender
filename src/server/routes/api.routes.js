@@ -3,7 +3,7 @@ const { spawn } = require("child_process");
 const path = require("path");
 const router = express.Router();
 
-const { requireToken }  = require("./auth.routes");
+const { requireToken } = require("./auth.routes");
 
 router.get("/auth-status", (req, res) => {
   res.json({
@@ -53,13 +53,30 @@ router.get("/top-tracks", requireToken, async (req, res) => {
 
 router.get("/recommended-songs", requireToken, async (req, res) => {
   try {
-    console.log("Access Token:", req.session.access_token); // Log the access token
+    // const preferences = {
+    //   year: {
+    //     start: 2012,
+    //     end: 2015,
+    //   },
+    //   duration: {
+    //     start: 200000,
+    //     end: 300000,
+    //   },
+    //   tempo: {
+    //     start: 60,
+    //     end: 120,
+    //   },
+    // }; // Test preferences
     const pythonProcess = spawn("python3", [
       path.join(
         __dirname,
         "../algorithm/python_ML/spotify-recommendation-engine.py"
       ),
-      req.session.access_token // Pass the access token as an argument
+      req.session.access_token, // Pass the access token as an argument
+      req.session.userData?.preferences
+        ? JSON.stringify(req.session.userData.preferences)
+        : "{}",
+      // JSON.stringify(preferences), // Test preferences
     ]);
 
     let scriptOutput = "";
@@ -115,9 +132,16 @@ router.post("/preferences", requireToken, (req, res) => {
 
     req.session.userData.preferences = req.body;
 
-    res.json({
-      success: true,
-      message: "Preferences saved successfully",
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ error: "Failed to save preferences" });
+      }
+
+      res.json({
+        success: true,
+        message: "Preferences saved successfully",
+      });
     });
   } catch (error) {
     console.error("Error saving preferences:", error);
@@ -128,6 +152,7 @@ router.post("/preferences", requireToken, (req, res) => {
 router.get("/preferences", requireToken, (req, res) => {
   try {
     const preferences = req.session.userData?.preferences || {};
+    console.log("Retrieved preferences:", preferences);
     res.json(preferences);
   } catch (error) {
     console.error("Error retrieving preferences:", error);

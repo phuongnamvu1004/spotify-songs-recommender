@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 import numpy as np
 import re 
@@ -16,6 +17,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '../../../config/.env'))
 
 # Get the access token from command line arguments
 ACCESS_TOKEN = sys.argv[1]
+preferences = sys.argv[2]
 
 def main():
     ### 1. Data Exploration/Preparation
@@ -151,18 +153,6 @@ def main():
     ### 3. Fetching user data from SpotifyAPI
 
     ## Fetching user playlists
-    # def fetch_user_playlists():
-    #     url = "http://localhost:3000/api/get-playlists"
-    #     headers = {
-    #         'Authorization': f'Bearer {ACCESS_TOKEN}'  # Use the passed token
-    #     }
-    #     response = requests.get(url, headers=headers)
-    #     if response.status_code == 200:
-    #         return response.json()
-    #     else:
-    #         print("Error fetching playlists:", response.status_code, response.text)  # Log the error
-    #         response.raise_for_status()
-    
     def fetch_user_playlists():
         # Call Spotify API directly instead of going through Express
         url = "https://api.spotify.com/v1/me/playlists"
@@ -279,6 +269,62 @@ def main():
     # print(complete_feature_set_playlist_vector_soul.shape)
 
     ### 5. Generate Recommendations (to fix)
+    def filter_by_preferences(df, preferences):
+        """ 
+        Filter songs based on user preferences of this JSON (or python dictionary) format:
+        {
+            artists: List[str],
+            year: {
+                start: int,
+                end: int
+            },
+            duration: {
+                start: int,
+                end: int,
+            },
+            energy: {
+                start: int,
+                end: int,
+            },
+            tempo: {
+                start: int,
+                end: int,
+            },
+        }
+        
+        Parameters: 
+            df (pandas dataframe): spotify dataframe
+            preferences (JSON format): user preferences
+            
+        Returns:
+            df: filtered dataframe
+        """
+        # Convert preferences to a dictionary if it's a JSON string
+        if isinstance(preferences, str):
+            preferences = json.loads(preferences)
+        
+        # Filter by artists
+        # if 'artists' in preferences:
+        #     df = df[df['artists_upd'].apply(lambda x: any(artist in x for artist in preferences['artists']))]
+        
+        # Filter by year
+        if 'year' in preferences:
+            df = df[(df['year'] >= preferences['year']['start']) & (df['year'] <= preferences['year']['end'])]
+        
+        # Filter by duration
+        if 'duration' in preferences:
+            df = df[(df['duration_ms'] >= preferences['duration']['start']) & (df['duration_ms'] <= preferences['duration']['end'])]
+        
+        # Filter by energy
+        if 'energy' in preferences:
+            df = df[(df['energy'] >= preferences['energy']['start']) & (df['energy'] <= preferences['energy']['end'])]
+        
+        # Filter by tempo
+        if 'tempo' in preferences:
+            df = df[(df['tempo'] >= preferences['tempo']['start']) & (df['tempo'] <= preferences['tempo']['end'])]
+        
+        return df
+    
     def generate_playlist_recos(df, features, nonplaylist_features):
         """ 
         Pull songs from a specific playlist.
@@ -292,11 +338,19 @@ def main():
             non_playlist_df_top_50: Top 50 recommendations for that playlist
         """
         
-        non_playlist_df = df[df['id'].isin(nonplaylist_features['id'].values)]
-        non_playlist_df['sim'] = cosine_similarity(nonplaylist_features.drop('id', axis = 1).values, features.values.reshape(1, -1))[:,0]
-        # non_playlist_df_top_50 = non_playlist_df.sort_values('sim',ascending = False).head(50)
-        non_playlist_df_top_50 = non_playlist_df.sort_values('sim',ascending = False).head(50)
-        # non_playlist_df_top_40['url'] = non_playlist_df_top_40['id'].apply(lambda x: sp.track(x)['album']['images'][1]['url'])
+        # Create a new DataFrame instead of a view
+        non_playlist_df = df[df['id'].isin(nonplaylist_features['id'].values)].copy()
+        
+        # Calculate similarities
+        similarities = cosine_similarity(nonplaylist_features.drop('id', axis=1).values, 
+                                       features.values.reshape(1, -1))[:,0]
+        
+        # Assign similarities to the DataFrame
+        non_playlist_df['sim'] = similarities
+        
+        # Get top 50 recommendations
+        non_playlist_df_sorted = non_playlist_df.sort_values('sim', ascending=False)
+        non_playlist_df_top_50 = filter_by_preferences(non_playlist_df_sorted, preferences).head(50)
         
         return non_playlist_df_top_50
 

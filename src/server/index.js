@@ -1,9 +1,26 @@
 const express = require("express");
 const session = require('express-session');
+const { createClient } = require('redis');
+const RedisStore = require('connect-redis').default;
 const path = require("path");
 
 const apiRouter = require('./routes/api.routes');
 const authRouter = require('./routes/auth.routes');
+
+// Initialize Redis client
+const redisClient = createClient();
+redisClient.connect().catch(console.error);
+
+// Handle Redis connection errors
+redisClient.on('error', (err) => {
+  console.log('Redis Client Error', err);
+});
+
+// Initialize Redis store
+const redisStore = new RedisStore({
+  client: redisClient,
+  prefix: "spotify-session:",
+});
 
 const app = express();
 
@@ -11,10 +28,15 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(session({
+  store: redisStore,
   secret: 'spotify-recommendation-secret',
   resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 3600000 } // 1 hour
+  saveUninitialized: false,
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production', // true in production
+    httpOnly: true,
+    maxAge: 3600000 // 1 hour
+  }
 }));
 
 app.use("/api", apiRouter);

@@ -64,7 +64,7 @@ async function refreshAccessToken(refresh_token) {
 }
 
 // Auth-related routes - keep simple for Spotify OAuth
-router.get("/login", function (req, res) {
+router.get("/login", function (_req, res) {
   const state = generateRandomString(16);
   const scope = "user-read-private user-read-email playlist-read-private user-top-read";
 

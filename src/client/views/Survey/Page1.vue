@@ -82,7 +82,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
                     </svg>
                 </button>
-                <button
+                <button @click="goToPage2"
                     class="flex h-10 w-10 items-center justify-center rounded-md bg-gray-700 transition-colors hover:bg-[#48885e]"
                     id="next-button">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -98,6 +98,11 @@
 <script>
 export default {
   name: "Page1",
+  methods: {
+    goToPage2() {
+        this.$router.push('/Survey/Page2')
+    }
+  }
 };
 </script>
 

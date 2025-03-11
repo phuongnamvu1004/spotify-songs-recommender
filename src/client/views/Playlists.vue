@@ -61,7 +61,7 @@ export default {
       // Future implementation for viewing playlist tracks
     },
     goToSurvey() {
-        this.$router.push('/Survey')
+        this.$router.push('/Survey/Page1')
     }
   }
 }
