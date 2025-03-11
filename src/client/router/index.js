@@ -2,9 +2,9 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Playlists from '../views/Playlists.vue'
 import Error from '../views/Error.vue'
-import Page1 from '../Survey/Page1.vue'
-import Page2 from '../Survey/Page2.vue'
-import Page3 from '../Survey/Page3.vue'
+import Page1 from '../views/Survey/Page1.vue'
+import Page2 from '../views/Survey/Page2.vue'
+import Page3 from '../views/Survey/Page3.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
