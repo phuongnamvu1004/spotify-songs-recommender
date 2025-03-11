@@ -76,37 +76,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
-
 export default {
-  setup() {
-    const formData = ref({
-      musicTypes: ["", "", "",],
-      favoriteArtists: ["", "", ""],
-      favoriteAlbums: ["", "", ""],
-    });
-    const fetchSurveyData = async () => {
-      try {
-        const response = await fetch("/api/survey-data");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        formData.value = data;
-      } catch (error) {
-        console.error("Error fetching survey data:", error);
-      }
-    };
-    onMounted(() => {
-      fetchSurveyData();
-    });
-
-    const handleSubmit = () => {
-      console.log("Survey Data:", formData.value);
-      alert("Survey submitted successfully!");
-    };
-
-    return { formData, handleSubmit };
-  },
+  name: "Page2",
 };
 </script>

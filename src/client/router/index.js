@@ -2,6 +2,9 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Playlists from '../views/Playlists.vue'
 import Error from '../views/Error.vue'
+import Page1 from '../Survey/Page1.vue'
+import Page2 from '../Survey/Page2.vue'
+import Page3 from '../Survey/Page3.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -15,6 +18,21 @@ const router = createRouter({
       path: '/playlists',
       name: 'playlists',
       component: Playlists
+    },
+    { 
+      path: '/Survey/Page1',
+      name: 'Page1',
+      component: Page1 
+    },
+    {
+      path: '/Survey/Page2',
+      name:'Page2',
+      component: Page2,
+    },
+    {
+      path: '/Survey/Page3',
+      name:'Page3',
+      component: Page3,
     },
     {
       path: '/error',
