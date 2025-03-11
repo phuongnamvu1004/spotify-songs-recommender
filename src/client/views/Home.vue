@@ -28,7 +28,6 @@
 
       <button
         class="bg-[#36ac5f] text-white px-8 py-3 rounded-full hover:bg-green-700 transition duration-300"
-        @click="handleLogin"
       >
         <div v-if="isAuthenticated">
           <p class="text-white font-bold">You are logged in!</p>

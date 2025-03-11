@@ -3,7 +3,6 @@
 ```ts
 interface Preferences {
   artists: string[];
-  genres: string[];
   year: {
     start: number;
     end: number;
@@ -27,7 +26,6 @@ interface Preferences {
 async function savePreferences() {
   const preferences = {
     artists: ['artist1', 'artist2'],
-    genres: ['pop', 'rock'],
     year: { start: 1990, end: 2020 },
     duration: { start: 120, end: 300 },
     energyLevel: { start: 0.3, end: 0.8 },
