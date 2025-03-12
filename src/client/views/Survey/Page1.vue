@@ -30,9 +30,6 @@
 
 
             <div class="mt-6 flex items-center justify-between">
-                <button @click="goToPage2" class="text-gray-300 transition-colors hover:text-white" id="skip-button">
-                    SKIP
-                </button>
                 <button @click="goToPage2"
                     class="flex items-center rounded-full bg-gradient-to-r from-green-500 to-blue-600 px-12 py-3 font-bold text-white hover:from-green-400 hover:to-blue-500 transition-all duration-300"
                     :disabled="!currentAnswer">
