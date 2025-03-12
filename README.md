@@ -31,7 +31,7 @@ npm install
 
 **Python setup**
 ```bash
-# Create virtual environment with Python 3
+# Create virtual environment with Python3
 python3 -m venv venv
 
 # Activate virtual environment
@@ -52,7 +52,10 @@ python3 src/server/algorithm/python_ML/spotify-recommendation-engine.py
 
 **Running server on localhost**
 ```bash
-npm run dev # running this command will run the frontend server and backend server concurrently, port 5173 for frontend and port 3000 (remember to prefix the routes with api/) for backend server
+# running this command will run the frontend server and backend server concurrently with:
+# - port 5173 for frontend  
+# - port 3000 (remember to prefix the routes with /api/) for backend server
+npm run dev 
 ```
 
 
