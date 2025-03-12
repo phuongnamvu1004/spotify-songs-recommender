@@ -1,6 +1,6 @@
 <template>
   <div class="p-5">
-    <h1 class="text-3xl font-bold text-spotify-green mb-8">My Playlists</h1>
+    <h1 class="animate-gradient-x mb-8 bg-gradient-to-r from-green-400 via-[#1DB954] to-blue-500 bg-clip-text text-2xl font-bold text-transparent md:text-4xl">My Playlists</h1>
     <div v-if="loading" class="text-center text-spotify-green text-xl my-8">Loading...</div>
     <div v-else-if="error" class="text-red-500 text-center p-4 bg-red-500/10 rounded-lg">{{ error }}</div>
     <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
@@ -19,7 +19,7 @@
   </div>
   <div class="mt-12 mb-4 flex justify-center">
     <button @click="goToSurvey"
-      class="bg-spotify-green hover:bg-[#18a64a] text-black font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center gap-2">
+      class="flex items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-blue-600 px-8 py-3 font-bold text-white hover:from-green-400 hover:to-blue-500 transition-all duration-300">
       Continue to the survey
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd"
