@@ -304,8 +304,8 @@ def main():
             preferences = json.loads(preferences)
         
         # Filter by artists
-        # if 'artists' in preferences:
-        #     df = df[df['artists_upd'].apply(lambda x: any(artist in x for artist in preferences['artists']))]
+        if 'artists' in preferences:
+            df = df[df['artists_upd'].apply(lambda x: any(artist in x for artist in preferences['artists']))]
         
         # Filter by year
         if 'year' in preferences:

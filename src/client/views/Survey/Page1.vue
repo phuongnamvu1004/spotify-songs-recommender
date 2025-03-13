@@ -17,7 +17,7 @@
             <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2" id="question-options">
                 <div id="options-1" class="col-span-2 grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div v-for="(option, index) in options" :key="index" @click="selectAnswer(option.value)" :class="['relative flex cursor-pointer items-center justify-between rounded-lg border border-gray-500 p-4 transition-colors hover:bg-gray-700',
-                        currentAnswer === option.value ? 'border-green-500 bg-gray-700' : ''
+                        isSelected(option.value) ? 'border-green-500 bg-gray-700' : ''
                     ]">
                         <span class="text-xl text-white">{{ option.label }}</span>
                         <div
@@ -28,11 +28,10 @@
                 </div>
             </div>
 
-
             <div class="mt-6 flex items-center justify-between">
                 <button @click="goToPage2"
                     class="flex items-center rounded-full bg-gradient-to-r from-green-500 to-blue-600 px-12 py-3 font-bold text-white hover:from-green-400 hover:to-blue-500 transition-all duration-300"
-                    :disabled="!currentAnswer">
+                    :disabled="selectedAnswers.length === 0">
                     NEXT
                     <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" viewBox="0 0 20 20"
                         fill="currentColor">
@@ -51,7 +50,7 @@ export default {
     name: "Page1",
     data() {
         return {
-            currentAnswer: [],
+            selectedAnswers: [],
             options: [
                 { label: "Pop", value: "A" },
                 { label: "Hip-Hop/Rap", value: "B" },
@@ -66,10 +65,21 @@ export default {
     },
     methods: {
         selectAnswer(option) {
-            this.currentAnswer = option;
+            const index = this.selectedAnswers.indexOf(option); 
+            if (index === -1) {
+                this.selectedAnswers.push(option);
+            } else {
+                this.selectedAnswers.splice(index, 1);
+            }
+        },
+        isSelected(option) {
+            return this.selectedAnswers.includes(option);
         },
         goToPage2() {
-            this.$router.push("/Survey/Page2");
+            this.$router.push({
+                path: "/Survey/Page2",
+                query: { answers: this.selectedAnswers.join(',') }
+            });
         }
     }
 };
