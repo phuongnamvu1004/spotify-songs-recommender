@@ -15,7 +15,7 @@
                     <div v-for="(option, index) in options" :key="index" 
                         @click="option.value !== 'G' ? selectAnswer(option.value) : selectCustomAnswer(option.value)" 
                         :class="['relative flex cursor-pointer items-center justify-between rounded-lg border border-gray-500 p-4 transition-colors hover:bg-gray-700',
-                        isSelected(option.value) ? 'border-green-500 bg-gray-700' : '']">
+                        isSelected(option.value) ? 'border-green-600 bg-gray-700' : '']">
                         <span class="text-xl text-white">{{ option.label }}</span>
                         <div
                             class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-gray-800">

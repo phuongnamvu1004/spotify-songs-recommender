@@ -6,7 +6,7 @@
                 id="question-text">Do you want your list of songs contained any musical instruments?</h1>
         </div>
         <div class="grid grid-cols-2 gap-4 mb-16">
-            <div class="flex flex-col items-center justify-center p-6 bg-gray-600 rounded-lg cursor-pointer hover:bg-gray-500 transition-colors border-2 border-transparent hover:border-purple-300"
+            <div class="flex flex-col items-center justify-center p-6 bg-gray-600 rounded-lg cursor-pointer hover:bg-gray-500 transition-colors border-2 border-transparent hover:border-green-600"
                 @click="selectOption('yes')">
                 <div class="mb-5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-white" fill="none" viewBox="0 0 24 24"
@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-center justify-center p-6 bg-gray-600 rounded-lg cursor-pointer hover:bg-gray-500 transition-colors border-2 border-transparent hover:border-purple-300"
+            <div class="flex flex-col items-center justify-center p-6 bg-gray-600 rounded-lg cursor-pointer hover:bg-gray-500 transition-colors border-2 border-transparent hover:border-green-600"
                 @click="selectOption('no')">
                 <div class="mb-5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-white" fill="none" viewBox="0 0 24 24"

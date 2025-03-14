@@ -16,7 +16,7 @@
           <div id="options-1" class="col-span-2 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div @click="selectAnswer('A')"
               :class="['relative flex cursor-pointer items-center justify-between rounded-lg border border-gray-500 p-4 transition-colors hover:bg-gray-700',
-              currentAnswer === 'A' ? 'border-green-500 bg-gray-700' : '']">
+              currentAnswer === 'A' ? 'border-green-600 bg-gray-700' : '']">
               <span class="text-xl text-white">Daily</span>
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-gray-800">A
               </div>
@@ -24,7 +24,7 @@
   
             <div @click="selectAnswer('B')"
               :class="['relative flex cursor-pointer items-center justify-between rounded-lg border border-gray-500 p-4 transition-colors hover:bg-gray-700',
-              currentAnswer === 'B' ? 'border-green-500 bg-gray-700' : '']">
+              currentAnswer === 'B' ? 'border-green-600 bg-gray-700' : '']">
               <span class="text-xl text-white">Weekly</span>
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-gray-800">B
               </div>
@@ -32,7 +32,7 @@
   
             <div @click="selectAnswer('C')"
               :class="['relative flex cursor-pointer items-center justify-between rounded-lg border border-gray-500 p-4 transition-colors hover:bg-gray-700',
-              currentAnswer === 'C' ? 'border-green-500 bg-gray-700' : '']">
+              currentAnswer === 'C' ? 'border-green-600 bg-gray-700' : '']">
               <span class="text-xl text-white">Rarely</span>
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-gray-800">C
               </div>
@@ -40,7 +40,7 @@
   
             <div @click="selectAnswer('D')"
               :class="['relative flex cursor-pointer items-center justify-between rounded-lg border border-gray-500 p-4 transition-colors hover:bg-gray-700',
-              currentAnswer === 'D' ? 'border-green-500 bg-gray-700' : '']">
+              currentAnswer === 'D' ? 'border-green-600 bg-gray-700' : '']">
               <span class="text-xl text-white">A few times a week</span>
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-gray-800">D
               </div>
@@ -48,7 +48,7 @@
   
             <div @click="selectAnswer('E')"
               :class="['relative flex cursor-pointer items-center justify-between rounded-lg border border-gray-500 p-4 transition-colors hover:bg-gray-700',
-              currentAnswer === 'E' ? 'border-green-500 bg-gray-700' : '']">
+              currentAnswer === 'E' ? 'border-green-600 bg-gray-700' : '']">
               <span class="text-xl text-white">A few times a month</span>
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-gray-800">E
               </div>
