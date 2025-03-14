@@ -25,11 +25,11 @@ interface Preferences {
 ```js
 async function savePreferences() {
   const preferences = {
-    artists: ['artist1', 'artist2'],
-    year: { start: 1990, end: 2020 },
-    duration: { start: 120, end: 300 },
-    energyLevel: { start: 0.3, end: 0.8 },
-    tempo: { start: 80, end: 140 }
+    artists: ['artist1', 'artist2', 'other'], // Artists name in survey + 'other' option
+    acousticness: boolean // True or False
+    year: { start: 1960, end: 2020 }, // min: 1960, max: 2020
+    duration: { start: 120, end: 300 }, // min: 60s, max: 420s
+    tempo: { start: 80, end: 140 } // min: 60, max: 150
   };
   
   try {

@@ -7,17 +7,35 @@
 This is a Node.js-based web application which helps recommend Spotify songs from user data and customization options using Content-based Filtering Machine Learning algorithm
 
 ### Tech stack
-- Runtime environment: Node.js
-- Frontend:
-    + Framework: Vue.js with Tailwind.css for styling
-- Backend:
-    + Framework: Express.js
-    + Session management: Redis
-    + DB: PostgreSQL
-- Python Machine Learning for generating recommendations:
-    + Libraries: sklearn, pandas, numpy
-- Build tool: Vite
-- Testing: Jest for Node.js and pytest for Python algorithm
+**Frontend:**
+- Vue.js 3
+- Tailwind CSS
+- Vite (build tool)
+- Jest (unit testing)
+
+**Backend:**
+- Node.js runtime
+- Express.js framework
+- PostgreSQL (primary database)
+- Redis (session management, caching)
+- Jest (API testing)
+
+**ML Service:**
+- Python 3.x
+- Core libraries:
+  - scikit-learn
+  - pandas
+  - numpy
+- pytest (testing)
+
+**DevOps/Infrastructure:**
+- Docker
+- Git version control
+- CI/CD (specify platform if any: GitHub Actions, Jenkins, etc.)
+
+**Package Managers:**
+- npm/bun (JavaScript)
+- pip (Python)
 
 ### Machine Learning algorithm specifications
 ...
