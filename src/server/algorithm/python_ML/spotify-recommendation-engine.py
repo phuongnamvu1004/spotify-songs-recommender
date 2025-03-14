@@ -10,11 +10,6 @@ from sklearn.preprocessing import MinMaxScaler
 from fetch_data import sql_query
 import requests
 
-from dotenv import load_dotenv
-import os
-# Load environment variables from .env file
-load_dotenv(os.path.join(os.path.dirname(__file__), '../../../config/.env'))
-
 # Get the access token from command line arguments
 ACCESS_TOKEN = sys.argv[1]
 preferences = sys.argv[2]
@@ -88,8 +83,8 @@ def main():
 
     # print(spotify_df.head())
 
-    #simple function to create OHE features
-    #this gets passed later on
+    # simple function to create OHE features
+    # this gets passed later on
     def ohe_prep(df, column, new_name): 
         """ 
         Create One Hot Encoded features of a specific column
@@ -121,13 +116,6 @@ def main():
         Returns: 
             final: final set of features 
         """
-        
-        #tfidf genre lists
-        # tfidf = TfidfVectorizer()
-        # tfidf_matrix =  tfidf.fit_transform(df['consolidates_genre_lists'].apply(lambda x: " ".join(x)))
-        # genre_df = pd.DataFrame(tfidf_matrix.toarray())
-        # genre_df.columns = ['genre' + "|" + i for i in tfidf.get_feature_names()]
-        # genre_df.reset_index(drop = True, inplace=True)
 
         #explicity_ohe = ohe_prep(df, 'explicit','exp')    
         year_ohe = ohe_prep(df, 'year','year') * 0.5
@@ -139,7 +127,6 @@ def main():
         floats_scaled = pd.DataFrame(scaler.fit_transform(floats), columns = floats.columns) * 0.2
 
         #concanenate all features
-        # final = pd.concat([genre_df, floats_scaled, popularity_ohe, year_ohe], axis = 1)
         final = pd.concat([floats_scaled, popularity_ohe, year_ohe], axis = 1)
         
         #add song id
@@ -260,7 +247,6 @@ def main():
         #print(playlist_feature_set_weighted.iloc[:,:-4].columns)
         playlist_feature_set_weighted.update(playlist_feature_set_weighted.iloc[:,:-4].mul(playlist_feature_set_weighted.weight,0))
         playlist_feature_set_weighted_final = playlist_feature_set_weighted.iloc[:, :-4]
-        #playlist_feature_set_weighted_final['id'] = playlist_feature_set['id']
         
         return playlist_feature_set_weighted_final.sum(axis = 0), complete_feature_set_nonplaylist
 
