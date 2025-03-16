@@ -41,32 +41,8 @@ router.get("/playlist-tracks/:playlistId", requireToken, async (req, res) => {
   }
 });
 
-router.get("/top-tracks", requireToken, async (req, res) => {
-  const response = await fetch("https://api.spotify.com/v1/me/top/tracks", {
-    headers: {
-      Authorization: `Bearer ${req.session.access_token}`,
-    },
-  });
-  const data = await response.json();
-  res.json(data);
-});
-
 router.get("/recommended-songs", requireToken, async (req, res) => {
   try {
-    // const preferences = {
-    //   year: {
-    //     start: 2012,
-    //     end: 2015,
-    //   },
-    //   duration: {
-    //     start: 200000,
-    //     end: 300000,
-    //   },
-    //   tempo: {
-    //     start: 60,
-    //     end: 120,
-    //   },
-    // }; // Test preferences
     const pythonProcess = spawn("python3", [
       path.join(
         __dirname,
@@ -76,7 +52,6 @@ router.get("/recommended-songs", requireToken, async (req, res) => {
       req.session.userData?.preferences
         ? JSON.stringify(req.session.userData.preferences)
         : "{}",
-      // JSON.stringify(preferences), // Test preferences
     ]);
 
     let scriptOutput = "";
@@ -124,23 +99,29 @@ router.get("/recommended-songs", requireToken, async (req, res) => {
   }
 });
 
-router.post("/preferences", requireToken, (req, res) => {
+router.post("/post-artists-preferences", requireToken, async (req, res) => {
   try {
     if (!req.session.userData) {
       req.session.userData = {};
     }
+    if (!req.session.userData.preferences) {
+      req.session.userData.preferences = {};
+    }
+    if (!req.session.userData.preferences.artists) {
+      req.session.userData.preferences.artists = [];
+    }
+    const ans = req.body;
+    req.session.userData.preferences.artists = ans?.artists || [];
 
-    req.session.userData.preferences = req.body;
-
+    // Save the session and send response
     req.session.save((err) => {
       if (err) {
         console.error("Session save error:", err);
         return res.status(500).json({ error: "Failed to save preferences" });
       }
-
       res.json({
         success: true,
-        message: "Preferences saved successfully",
+        message: "Artists preferences saved successfully",
       });
     });
   } catch (error) {
@@ -149,14 +130,66 @@ router.post("/preferences", requireToken, (req, res) => {
   }
 });
 
-router.get("/preferences", requireToken, (req, res) => {
+router.post(
+  "/post-acousticness-preferences",
+  requireToken,
+  async (req, res) => {
+    try {
+      if (!req.session.userData) {
+        req.session.userData = {};
+      }
+      if (!req.session.userData.preferences) {
+        req.session.userData.preferences = {};
+      }
+      if (!req.session.userData.preferences.acousticness) {
+        req.session.userData.preferences.acousticness = false;
+      }
+      const ans = req.body;
+
+      req.session.userData.preferences.acousticness =
+        ans?.acousticness || false;
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ error: "Failed to save preferences" });
+        }
+        res.json({
+          success: true,
+          message: "Preferences saved successfully",
+        });
+      });
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      res.status(500).json({ error: "Failed to save preferences" });
+    }
+  }
+);
+
+router.post("/post-remaining-preferences", requireToken, async (req, res) => {
   try {
-    const preferences = req.session.userData?.preferences || {};
-    console.log("Retrieved preferences:", preferences);
-    res.json(preferences);
+    const remainingPreferences = req.body;
+
+    if (!req.session.userData) {
+      req.session.userData = {};
+    }
+    if (!req.session.userData.preferences) {
+      req.session.userData.preferences = {};
+    }
+    if (!req.session.userData.preferences.year) {
+      req.session.userData.preferences.year = {};
+    }
+    if (!req.session.userData.preferences.duration) {
+      req.session.userData.preferences.duration = {};
+    }
+    if (!req.session.userData.preferences.tempo) {
+      req.session.userData.preferences.tempo = {};
+    }
+    req.session.userData.preferences.year = remainingPreferences.year;
+    req.session.userData.preferences.duration = remainingPreferences.duration;
+    req.session.userData.preferences.tempo = remainingPreferences.tempo;
   } catch (error) {
-    console.error("Error retrieving preferences:", error);
-    res.status(500).json({ error: "Failed to retrieve preferences" });
+    console.error("Error saving preferences:", error);
+    res.status(500).json({ error: "Failed to save preferences" });
   }
 });
 

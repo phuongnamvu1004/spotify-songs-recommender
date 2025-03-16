@@ -7,6 +7,7 @@ import Page2 from '../views/Survey/Page2.vue'
 import Page3 from '../views/Survey/Page3.vue'
 import Page4 from '../views/Survey/Page4.vue'
 import Page5 from '../views/Survey/Page5.vue'
+import Song from '../views/Song.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -45,6 +46,11 @@ const router = createRouter({
       path: '/Survey/Page5',
       name:'Page5',
       component: Page5,
+    },
+    {
+      path: '/song',
+      name: 'song',
+      component: Song,
     },
     {
       path: '/error',

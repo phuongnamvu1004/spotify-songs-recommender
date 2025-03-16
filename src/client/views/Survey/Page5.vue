@@ -423,6 +423,7 @@ export default {
 }
 
 .range {
+    appearance: none;
     -webkit-appearance: none;
     position: absolute;
     width: 100%;
