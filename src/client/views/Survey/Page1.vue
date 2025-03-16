@@ -65,7 +65,7 @@ export default {
     },
     methods: {
         selectAnswer(option) {
-            const index = this.selectedAnswers.indexOf(option); 
+            const index = this.selectedAnswers.indexOf(option);
             if (index === -1) {
                 this.selectedAnswers.push(option);
             } else {

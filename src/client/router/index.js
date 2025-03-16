@@ -48,8 +48,8 @@ const router = createRouter({
       component: Page5,
     },
     {
-      path: '/song',
-      name: 'song',
+      path: '/Song',
+      name: 'Song',
       component: Song,
     },
     {

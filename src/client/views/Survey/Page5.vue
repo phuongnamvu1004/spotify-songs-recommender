@@ -15,9 +15,10 @@
 
                     <div class="mb-8">
                         <div class="flex justify-between mb-2">
-                            <span class="text-gray-400">Selected years: <span class="text-gray-200 font-medium">{{ Math.min(year1, year2) }} - {{ Math.max(year1, year2) }}</span></span>
+                            <span class="text-gray-400">Selected years: <span class="text-gray-200 font-medium">{{
+                                Math.min(year1, year2) }} - {{ Math.max(year1, year2) }}</span></span>
                         </div>
-                        
+
                         <div class="relative mt-8 mb-16">
                             <div class="base-line"></div>
                             <!-- Selected range -->
@@ -25,49 +26,30 @@
                                 left: ((Math.min(year1, year2) - 1990) / 30 * 100) + '%',
                                 width: (Math.abs(year1 - year2) / 30 * 100) + '%'
                             }"></div>
-                            
+
                             <!-- Two overlapping sliders -->
                             <div class="multi-range" ref="yearRangeContainer">
                                 <!-- First slider -->
-                                <input
-                                    type="range"
-                                    min="1990"
-                                    max="2020"
-                                    v-model.number="year1"
-                                    class="range range1"
-                                />
-                                
+                                <input type="range" min="1990" max="2020" v-model.number="year1" class="range range1" />
+
                                 <!-- Second slider -->
-                                <input
-                                    type="range"
-                                    min="1990"
-                                    max="2020"
-                                    v-model.number="year2"
-                                    class="range range2"
-                                />
-                                
+                                <input type="range" min="1990" max="2020" v-model.number="year2" class="range range2" />
+
                                 <!-- Circle indicators (draggable) -->
-                                <div 
-                                    class="circle circle1" 
-                                    :style="{
-                                        left: ((year1 - 1990) / 30 * 100) + '%'
-                                    }"
-                                    @mousedown="startDrag($event, 'year1')"
-                                    @touchstart="startDrag($event, 'year1')"
-                                ></div>
-                                <div 
-                                    class="circle circle2" 
-                                    :style="{
-                                        left: ((year2 - 1990) / 30 * 100) + '%'
-                                    }"
-                                    @mousedown="startDrag($event, 'year2')"
-                                    @touchstart="startDrag($event, 'year2')"
-                                ></div>
+                                <div class="circle circle1" :style="{
+                                    left: ((year1 - 1990) / 30 * 100) + '%'
+                                }" @mousedown="startDrag($event, 'year1')" @touchstart="startDrag($event, 'year1')">
+                                </div>
+                                <div class="circle circle2" :style="{
+                                    left: ((year2 - 1990) / 30 * 100) + '%'
+                                }" @mousedown="startDrag($event, 'year2')" @touchstart="startDrag($event, 'year2')">
+                                </div>
                             </div>
-                            
+
                             <!-- Timeline year markers -->
                             <div class="year-markers">
-                                <div v-for="year in yearMarkers" :key="year" class="year-marker" :style="{ left: ((year - 1990) / 30 * 100) + '%' }">
+                                <div v-for="year in yearMarkers" :key="year" class="year-marker"
+                                    :style="{ left: ((year - 1990) / 30 * 100) + '%' }">
                                     <div class="tick"></div>
                                     <div class="year-label">{{ year }}</div>
                                 </div>
@@ -84,63 +66,46 @@
 
                     <div class="mb-8">
                         <div class="flex justify-between mb-2">
-                            <span class="text-gray-400">Selected duration: <span class="text-gray-200 font-medium">{{ formatDuration(Math.min(duration1, duration2)) }} - {{ formatDuration(Math.max(duration1, duration2)) }}</span></span>
+                            <span class="text-gray-400">Selected duration: <span class="text-gray-200 font-medium">{{
+                                formatDuration(Math.min(duration1, duration2)) }} - {{
+                                        formatDuration(Math.max(duration1, duration2)) }}</span></span>
                         </div>
-                        
+
                         <div class="relative mt-8 mb-16">
                             <!-- Base line -->
                             <div class="base-line"></div>
-                            
+
                             <!-- Selected range -->
                             <div class="selected-range" :style="{
                                 left: ((Math.min(duration1, duration2) - 120) / 180 * 100) + '%',
                                 width: (Math.abs(duration1 - duration2) / 180 * 100) + '%'
                             }"></div>
-                            
+
                             <!-- Two overlapping sliders -->
                             <div class="multi-range" ref="durationRangeContainer">
                                 <!-- First slider -->
-                                <input
-                                    type="range"
-                                    min="120"
-                                    max="300"
-                                    step="5"
-                                    v-model.number="duration1"
-                                    class="range range1"
-                                />
-                                
+                                <input type="range" min="120" max="300" step="5" v-model.number="duration1"
+                                    class="range range1" />
+
                                 <!-- Second slider -->
-                                <input
-                                    type="range"
-                                    min="120"
-                                    max="300"
-                                    step="5"
-                                    v-model.number="duration2"
-                                    class="range range2"
-                                />
-                                
+                                <input type="range" min="120" max="300" step="5" v-model.number="duration2"
+                                    class="range range2" />
+
                                 <!-- Circle indicators (draggable) -->
-                                <div 
-                                    class="circle circle1" 
-                                    :style="{
-                                        left: ((duration1 - 120) / 180 * 100) + '%'
-                                    }"
-                                    @mousedown="startDrag($event, 'duration1')"
-                                    @touchstart="startDrag($event, 'duration1')"
-                                ></div>
-                                <div 
-                                    class="circle circle2" 
-                                    :style="{
-                                        left: ((duration2 - 120) / 180 * 100) + '%'
-                                    }"
-                                    @mousedown="startDrag($event, 'duration2')"
-                                    @touchstart="startDrag($event, 'duration2')"
-                                ></div>
+                                <div class="circle circle1" :style="{
+                                    left: ((duration1 - 120) / 180 * 100) + '%'
+                                }" @mousedown="startDrag($event, 'duration1')"
+                                    @touchstart="startDrag($event, 'duration1')"></div>
+                                <div class="circle circle2" :style="{
+                                    left: ((duration2 - 120) / 180 * 100) + '%'
+                                }" @mousedown="startDrag($event, 'duration2')"
+                                    @touchstart="startDrag($event, 'duration2')"></div>
                             </div>
-                            
+
                             <!-- Duration markers -->
                             <div class="year-markers">
-                                <div v-for="duration in durationMarkers" :key="duration" class="year-marker" :style="{ left: ((duration - 120) / 180 * 100) + '%' }">
+                                <div v-for="duration in durationMarkers" :key="duration" class="year-marker"
+                                    :style="{ left: ((duration - 120) / 180 * 100) + '%' }">
                                     <div class="tick"></div>
                                     <div class="year-label">{{ formatDuration(duration) }}</div>
                                 </div>
@@ -157,63 +122,45 @@
 
                     <div class="mb-8">
                         <div class="flex justify-between mb-2">
-                            <span class="text-gray-400">Selected tempo: <span class="text-gray-200 font-medium">{{ Math.min(tempo1, tempo2) }} - {{ Math.max(tempo1, tempo2) }} BPM</span></span>
+                            <span class="text-gray-400">Selected tempo: <span class="text-gray-200 font-medium">{{
+                                Math.min(tempo1, tempo2) }} - {{ Math.max(tempo1, tempo2) }} BPM</span></span>
                         </div>
-                        
+
                         <div class="relative mt-8 mb-16">
                             <!-- Base line -->
                             <div class="base-line"></div>
-                            
+
                             <!-- Selected range -->
                             <div class="selected-range" :style="{
                                 left: ((Math.min(tempo1, tempo2) - 80) / 60 * 100) + '%',
                                 width: (Math.abs(tempo1 - tempo2) / 60 * 100) + '%'
                             }"></div>
-                            
+
                             <!-- Two overlapping sliders -->
                             <div class="multi-range" ref="tempoRangeContainer">
                                 <!-- First slider -->
-                                <input
-                                    type="range"
-                                    min="80"
-                                    max="140"
-                                    step="1"
-                                    v-model.number="tempo1"
-                                    class="range range1"
-                                />
-                                
+                                <input type="range" min="80" max="140" step="1" v-model.number="tempo1"
+                                    class="range range1" />
+
                                 <!-- Second slider -->
-                                <input
-                                    type="range"
-                                    min="80"
-                                    max="140"
-                                    step="1"
-                                    v-model.number="tempo2"
-                                    class="range range2"
-                                />
-                                
+                                <input type="range" min="80" max="140" step="1" v-model.number="tempo2"
+                                    class="range range2" />
+
                                 <!-- Circle indicators (draggable) -->
-                                <div 
-                                    class="circle circle1" 
-                                    :style="{
-                                        left: ((tempo1 - 80) / 60 * 100) + '%'
-                                    }"
-                                    @mousedown="startDrag($event, 'tempo1')"
-                                    @touchstart="startDrag($event, 'tempo1')"
-                                ></div>
-                                <div 
-                                    class="circle circle2" 
-                                    :style="{
-                                        left: ((tempo2 - 80) / 60 * 100) + '%'
-                                    }"
-                                    @mousedown="startDrag($event, 'tempo2')"
-                                    @touchstart="startDrag($event, 'tempo2')"
-                                ></div>
+                                <div class="circle circle1" :style="{
+                                    left: ((tempo1 - 80) / 60 * 100) + '%'
+                                }" @mousedown="startDrag($event, 'tempo1')" @touchstart="startDrag($event, 'tempo1')">
+                                </div>
+                                <div class="circle circle2" :style="{
+                                    left: ((tempo2 - 80) / 60 * 100) + '%'
+                                }" @mousedown="startDrag($event, 'tempo2')" @touchstart="startDrag($event, 'tempo2')">
+                                </div>
                             </div>
-                            
+
                             <!-- Tempo markers - BPM removed -->
                             <div class="year-markers">
-                                <div v-for="tempo in tempoMarkers" :key="tempo" class="year-marker" :style="{ left: ((tempo - 80) / 60 * 100) + '%' }">
+                                <div v-for="tempo in tempoMarkers" :key="tempo" class="year-marker"
+                                    :style="{ left: ((tempo - 80) / 60 * 100) + '%' }">
                                     <div class="tick"></div>
                                     <div class="year-label">{{ tempo }}</div>
                                 </div>
@@ -252,17 +199,17 @@ export default {
             year1: 1995,
             year2: 2010,
             yearMarkers: [1990, 1995, 2000, 2005, 2010, 2015, 2020],
-            
+
             // Question 6 data
             duration1: 150, // 2:30
             duration2: 240, // 4:00
             durationMarkers: [120, 150, 180, 210, 240, 270, 300], // 2:00, 2:30, 3:00, 3:30, 4:00, 4:30, 5:00
-            
+
             // Question 7 data
-            tempo1: 90, 
+            tempo1: 90,
             tempo2: 120,
             tempoMarkers: [80, 90, 100, 110, 120, 130, 140],
-            
+
             // Dragging state
             isDragging: false,
             currentDragTarget: null,
@@ -292,16 +239,16 @@ export default {
         goTopage4() {
             this.$router.push('/Survey/Page4');
         },
-        submitAnswers() {
+        async submitAnswers() {
             // Store answers with sorted values
             const answers = {
                 yearRange: [Math.min(this.year1, this.year2), Math.max(this.year1, this.year2)],
                 durationRange: [
-                    Math.min(this.duration1, this.duration2), 
+                    Math.min(this.duration1, this.duration2),
                     Math.max(this.duration1, this.duration2)
                 ],
                 formattedDurationRange: [
-                    this.formatDuration(Math.min(this.duration1, this.duration2)), 
+                    this.formatDuration(Math.min(this.duration1, this.duration2)),
                     this.formatDuration(Math.max(this.duration1, this.duration2))
                 ],
                 tempoRange: [Math.min(this.tempo1, this.tempo2), Math.max(this.tempo1, this.tempo2)]
@@ -309,88 +256,119 @@ export default {
 
             console.log('Music preferences:', answers);
 
-            // Navigate to results page
-            this.$router.push('/Survey/Playlist');
-        },
-        startDrag(event, targetProperty) {
-            event.preventDefault();
-            this.isDragging = true;
-            this.currentDragTarget = targetProperty;
-            
-            // Determine which container is active based on the target property
-            if (targetProperty.startsWith('year')) {
-                this.activeContainer = this.$refs.yearRangeContainer;
-            } else if (targetProperty.startsWith('duration')) {
-                this.activeContainer = this.$refs.durationRangeContainer;
-            } else if (targetProperty.startsWith('tempo')) {
-                this.activeContainer = this.$refs.tempoRangeContainer;
-            }
-            
-            // Add active class for visual feedback
-            const targetElement = event.target;
-            targetElement.classList.add('dragging');
-        },
-        stopDrag() {
-            if (this.isDragging) {
-                this.isDragging = false;
-                this.activeContainer = null;
-                
-                // Remove active class from all circles
-                document.querySelectorAll('.circle').forEach(circle => {
-                    circle.classList.remove('dragging');
+            try {
+
+                const response = await fetch("api/post-remaining-preferences", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        year: {
+                            min: answers.yearRange[0],
+                            max: answers.yearRange[1]
+                        },
+                        duration: {
+                            min: answers.durationRange[0],
+                            max: answers.durationRange[1]
+                        },
+                        tempo: {
+                            min: answers.tempoRange[0],
+                            max: answers.tempoRange[1]
+                        }
+                    })
                 });
+
+                if (response.ok) {
+                    console.log('Music preferences saved successfully');
+                    this.$router.push('/Song');
+                } else {
+                    console.error('Failed to save music preferences');
+                }
+            } catch (error) {
+                console.error('Error', error);
             }
+
         },
-        onDrag(event) {
-            if (!this.isDragging || !this.currentDragTarget || !this.activeContainer) return;
-            
-            // Get container's bounding rectangle
-            const containerRect = this.activeContainer.getBoundingClientRect();
-            
-            // Get X position (handle both mouse and touch events)
-            let clientX;
-            if (event.touches) {
-                clientX = event.touches[0].clientX;
-            } else {
-                clientX = event.clientX;
+            startDrag(event, targetProperty) {
+                event.preventDefault();
+                this.isDragging = true;
+                this.currentDragTarget = targetProperty;
+
+                // Determine which container is active based on the target property
+                if (targetProperty.startsWith('year')) {
+                    this.activeContainer = this.$refs.yearRangeContainer;
+                } else if (targetProperty.startsWith('duration')) {
+                    this.activeContainer = this.$refs.durationRangeContainer;
+                } else if (targetProperty.startsWith('tempo')) {
+                    this.activeContainer = this.$refs.tempoRangeContainer;
+                }
+
+                // Add active class for visual feedback
+                const targetElement = event.target;
+                targetElement.classList.add('dragging');
+            },
+            stopDrag() {
+                if (this.isDragging) {
+                    this.isDragging = false;
+                    this.activeContainer = null;
+
+                    // Remove active class from all circles
+                    document.querySelectorAll('.circle').forEach(circle => {
+                        circle.classList.remove('dragging');
+                    });
+                }
+            },
+            onDrag(event) {
+                if (!this.isDragging || !this.currentDragTarget || !this.activeContainer) return;
+
+                // Get container's bounding rectangle
+                const containerRect = this.activeContainer.getBoundingClientRect();
+
+                // Get X position (handle both mouse and touch events)
+                let clientX;
+                if (event.touches) {
+                    clientX = event.touches[0].clientX;
+                } else {
+                    clientX = event.clientX;
+                }
+
+                // Calculate position relative to container
+                let relativeX = clientX - containerRect.left;
+
+                // Constrain to container bounds
+                relativeX = Math.max(0, Math.min(relativeX, containerRect.width));
+
+                // Convert to value based on the current target
+                let minValue, maxValue, step;
+
+                if (this.currentDragTarget.startsWith('year')) {
+                    minValue = 1990;
+                    maxValue = 2020;
+                    step = 1;
+                } else if (this.currentDragTarget.startsWith('duration')) {
+                    minValue = 120;
+                    maxValue = 300;
+                    step = 5;
+                } else if (this.currentDragTarget.startsWith('tempo')) {
+                    minValue = 80;
+                    maxValue = 140;
+                    step = 1;
+                }
+
+                const valueRange = maxValue - minValue;
+                let newValue = minValue + (relativeX / containerRect.width) * valueRange;
+
+                // Apply step if needed
+                if (step > 1) {
+                    newValue = Math.round(newValue / step) * step;
+                } else {
+                    newValue = Math.round(newValue);
+                }
+
+                // Update the appropriate property
+                this[this.currentDragTarget] = newValue;
             }
-            
-            // Calculate position relative to container
-            let relativeX = clientX - containerRect.left;
-            
-            // Constrain to container bounds
-            relativeX = Math.max(0, Math.min(relativeX, containerRect.width));
-            
-            // Convert to value based on the current target
-            let minValue, maxValue, step;
-            
-            if (this.currentDragTarget.startsWith('year')) {
-                minValue = 1990;
-                maxValue = 2020;
-                step = 1;
-            } else if (this.currentDragTarget.startsWith('duration')) {
-                minValue = 120;
-                maxValue = 300;
-                step = 5;
-            } else if (this.currentDragTarget.startsWith('tempo')) {
-                minValue = 80;
-                maxValue = 140;
-                step = 1;
-            }
-            
-            const valueRange = maxValue - minValue;
-            let newValue = minValue + (relativeX / containerRect.width) * valueRange;
-            
-            // Apply step if needed
-            if (step > 1) {
-                newValue = Math.round(newValue / step) * step;
-            } else {
-                newValue = Math.round(newValue);
-            }
-            
-            // Update the appropriate property
-            this[this.currentDragTarget] = newValue;
-        }
     }
 };
 </script>
@@ -478,11 +456,13 @@ export default {
 }
 
 .circle1 {
-    background-color: #3B82F6; /* Blue */
+    background-color: #3B82F6;
+    /* Blue */
 }
 
 .circle2 {
-    background-color: #10B981; /* Green */
+    background-color: #10B981;
+    /* Green */
 }
 
 /* Year/Value markers */

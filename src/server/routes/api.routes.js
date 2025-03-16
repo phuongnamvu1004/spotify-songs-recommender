@@ -184,9 +184,21 @@ router.post("/post-remaining-preferences", requireToken, async (req, res) => {
     if (!req.session.userData.preferences.tempo) {
       req.session.userData.preferences.tempo = {};
     }
+
     req.session.userData.preferences.year = remainingPreferences.year;
     req.session.userData.preferences.duration = remainingPreferences.duration;
     req.session.userData.preferences.tempo = remainingPreferences.tempo;
+
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ error: "Failed to save preferences" });
+      }
+      res.json({
+        success: true,
+        message: "Music preferences saved successfully",
+      });
+    });
   } catch (error) {
     console.error("Error saving preferences:", error);
     res.status(500).json({ error: "Failed to save preferences" });
