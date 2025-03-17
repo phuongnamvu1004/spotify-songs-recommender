@@ -9,7 +9,7 @@
                 <h2 class="text-2xl text-gray-300" id="question-number">Question 3</h2>
                 <h1 class="animate-gradient-x mb-8 bg-gradient-to-r from-green-400 via-[#1DB954] to-blue-500 bg-clip-text text-2xl font-bold text-transparent md:text-4xl"
                     id="question-text">
-                    Do you want your list of songs to contain any musical instruments?
+                    Do you want to have an accousticness in your songs?
                 </h1>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-16">

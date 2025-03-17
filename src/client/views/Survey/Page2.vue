@@ -19,8 +19,8 @@
                             ? selectAnswer(option.value)
                             : selectCustomAnswer(option.value)
                         " :class="[
-                'relative flex cursor-pointer items-center justify-between rounded-lg border border-gray-500 p-4 transition-colors hover:bg-gray-700',
-                isSelected(option.value) ? 'border-green-600 bg-gray-700' : '',
+                'relative flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors hover:bg-gray-700',
+                isSelected(option.value) ? 'border-green-600 bg-gray-700' : 'border-gray-500',
             ]">
                         <span class="text-xl text-white">{{ option.label }}</span>
                         <div
@@ -34,11 +34,42 @@
                 <div v-if="isSelected('G')" class="col-span-2 mt-4">
                     <div class="rounded-lg border border-gray-500 p-4">
                         <label for="custom-artist" class="mb-2 block text-lg text-white">Please specify your favorite
-                            artist:</label>
-                        <input type="text" id="custom-artist" v-model="customArtist"
-                            class="w-full rounded-md border border-gray-600 bg-gray-800 p-3 text-white focus:border-purple-300 focus:outline-none"
-                            placeholder="Enter artist name here" @input="validateCustomInput"
-                            @keydown.enter="goToPage3" />
+                            artists:</label>
+                        
+                        <!-- Artist chips/tags display -->
+                        <div v-if="customArtists.length > 0" class="mb-3 flex flex-wrap gap-2">
+                            <div v-for="(artist, index) in customArtists" :key="index" 
+                                class="flex items-center rounded-full bg-gray-700 px-3 py-1 text-white transition-colors hover:bg-gray-600">
+                                <span>{{ artist }}</span>
+                                <button @click="removeArtist(index)" class="ml-2 text-gray-300 hover:text-white"
+                                    title="Remove artist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Counter for artists -->
+                        <div v-if="customArtists.length > 0" class="mb-2 text-sm text-gray-400">
+                            {{ customArtists.length }} {{ customArtists.length === 1 ? 'artist' : 'artists' }} added
+                        </div>
+                        
+                        <!-- Input with add button -->
+                        <div class="flex">
+                            <input type="text" id="custom-artist" v-model="currentArtist"
+                                class="flex-grow rounded-l-md border border-gray-600 bg-gray-800 p-3 text-white focus:border-purple-300 focus:outline-none"
+                                placeholder="Enter artist name here" @keydown.enter.prevent="addArtist" />
+                            
+                            <button @click="addArtist" 
+                                class="rounded-r-md bg-gray-700 px-4 text-white transition-colors hover:bg-gray-600 disabled:opacity-50"
+                                :disabled="!isCurrentArtistValid"
+                                title="Add artist">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -94,8 +125,8 @@ export default {
     data() {
         return {
             selectedAnswers: [],
-            customArtist: '',
-            isCustomValid: false,
+            customArtists: [], // Array to store multiple artists
+            currentArtist: '', // Current input value
             isLoading: false,
             error: null,
             options: [
@@ -111,18 +142,31 @@ export default {
     },
     computed: {
         isNextEnabled() {
-            // Enable next button if any option except G is selected,
-            // or if G is selected and the custom input is valid
-            return (this.selectedAnswers.length > 0 && !this.isSelected('G')) ||
-                (this.isSelected('G') && this.isCustomValid);
+            // Enable next button if any option is selected
+            // If G is one of the selected options, make sure there's at least one custom artist
+            const hasStandardSelection = this.selectedAnswers.some(option => option !== 'G');
+            const hasValidCustomSelection = this.isSelected('G') && this.customArtists.length > 0;
+            
+            return hasStandardSelection || hasValidCustomSelection;
+        },
+        isCurrentArtistValid() {
+            return this.currentArtist.trim().length > 0;
+        },
+        totalSelectedArtists() {
+            // Count standard selections (excluding G) plus custom artists
+            const standardCount = this.selectedAnswers.filter(option => option !== 'G').length;
+            const customCount = this.isSelected('G') ? this.customArtists.length : 0;
+            return standardCount + customCount;
         }
     },
     methods: {
         selectAnswer(option) {
             const index = this.selectedAnswers.indexOf(option);
             if (index === -1) {
+                // Add this option to the selection (allowing multiple)
                 this.selectedAnswers.push(option);
             } else {
+                // Remove this option from selection
                 this.selectedAnswers.splice(index, 1);
             }
         },
@@ -131,10 +175,10 @@ export default {
             if (this.isSelected(option)) {
                 const index = this.selectedAnswers.indexOf(option);
                 this.selectedAnswers.splice(index, 1);
-                this.customArtist = '';
-                this.isCustomValid = false;
+                this.customArtists = [];
+                this.currentArtist = '';
             } else {
-                // If G is being selected, add it and focus the input
+                // If G is being selected, add it to the selection (not replacing)
                 this.selectedAnswers.push(option);
                 this.$nextTick(() => {
                     document.getElementById('custom-artist').focus();
@@ -144,9 +188,36 @@ export default {
         isSelected(option) {
             return this.selectedAnswers.includes(option);
         },
-        validateCustomInput() {
-            // Enable the next button only if there's text in the custom field
-            this.isCustomValid = this.customArtist.trim().length > 0;
+        addArtist() {
+            if (this.isCurrentArtistValid) {
+                const artistName = this.currentArtist.trim();
+                
+                // Check for duplicates before adding
+                if (!this.customArtists.includes(artistName)) {
+                    // Add current artist to the array
+                    this.customArtists.push(artistName);
+                    // Clear the input
+                    this.currentArtist = '';
+                    // Focus back on the input for convenience
+                    this.$nextTick(() => {
+                        document.getElementById('custom-artist').focus();
+                    });
+                } else {
+                    // Briefly show an error and highlight the duplicate
+                    this.error = `"${artistName}" is already in your list`;
+                    setTimeout(() => {
+                        if (this.error === `"${artistName}" is already in your list`) {
+                            this.error = null;
+                        }
+                    }, 2000);
+                    
+                    // Clear the input
+                    this.currentArtist = '';
+                }
+            }
+        },
+        removeArtist(index) {
+            this.customArtists.splice(index, 1);
         },
         goToPage1() {
             this.$router.push('/survey/page1');
@@ -200,14 +271,24 @@ export default {
                 'F': 'Adele'
             };
 
-            const selectedArtists = this.selectedAnswers.map(option => {
-                if (option === 'G') {
-                    return this.customArtist;
-                }
-                return artistMap[option];
-            });
-
-            return selectedArtists;
+            // Collect all standard artists from selections
+            const standardArtists = this.selectedAnswers
+                .filter(option => option !== 'G')
+                .map(option => artistMap[option]);
+            
+            // Get custom artists if "Other" is selected
+            const otherArtists = this.isSelected('G') ? this.customArtists : [];
+            
+            // Combine both lists
+            return [...standardArtists, ...otherArtists];
+        },
+        
+        // Add method to check if current input matches an existing entry
+        isDuplicateArtist() {
+            if (!this.currentArtist) return false;
+            return this.customArtists.some(artist => 
+                artist.toLowerCase() === this.currentArtist.trim().toLowerCase()
+            );
         }
     }
 };
