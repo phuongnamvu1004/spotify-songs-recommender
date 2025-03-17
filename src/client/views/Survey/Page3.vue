@@ -7,7 +7,7 @@
         <div class="relative z-10 mx-auto max-w-3xl p-5">
             <div class="mb-8">
                 <h2 class="text-2xl text-gray-300" id="question-number">Question 3</h2>
-                <h1 class="animate-gradient-x mb-8 bg-gradient-to-r from-green-400 via-[#1DB954] to-blue-500 bg-clip-text text-2xl font-bold text-transparent md:text-4xl"
+                <h1 class="animate-gradient-x mb-8 bg-gradient-to-r from-green-400 via-[#1DB954] to-blue-500 bg-clip-text text-2xl font-bold text-transparent md:text-5xl"
                     id="question-text">
                     Do you want to have an accousticness in your songs?
                 </h1>

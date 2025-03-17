@@ -23,25 +23,25 @@
                             <div class="base-line"></div>
                             <!-- Selected range -->
                             <div class="selected-range" :style="{
-                                left: ((Math.min(year1, year2) - 1990) / 30 * 100) + '%',
-                                width: (Math.abs(year1 - year2) / 30 * 100) + '%'
+                                left: ((Math.min(year1, year2) - 1960) / 60 * 100) + '%',
+                                width: (Math.abs(year1 - year2) / 60 * 100) + '%'
                             }"></div>
 
                             <!-- Two overlapping sliders -->
                             <div class="multi-range" ref="yearRangeContainer">
                                 <!-- First slider -->
-                                <input type="range" min="1990" max="2020" v-model.number="year1" class="range range1" />
+                                <input type="range" min="1960" max="2020" v-model.number="year1" class="range range1" />
 
                                 <!-- Second slider -->
-                                <input type="range" min="1990" max="2020" v-model.number="year2" class="range range2" />
+                                <input type="range" min="1960" max="2020" v-model.number="year2" class="range range2" />
 
                                 <!-- Circle indicators (draggable) -->
                                 <div class="circle circle1" :style="{
-                                    left: ((year1 - 1990) / 30 * 100) + '%'
+                                    left: ((year1 - 1960) / 60 * 100) + '%'
                                 }" @mousedown="startDrag($event, 'year1')" @touchstart="startDrag($event, 'year1')">
                                 </div>
                                 <div class="circle circle2" :style="{
-                                    left: ((year2 - 1990) / 30 * 100) + '%'
+                                    left: ((year2 - 1960) / 60 * 100) + '%'
                                 }" @mousedown="startDrag($event, 'year2')" @touchstart="startDrag($event, 'year2')">
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                             <!-- Timeline year markers -->
                             <div class="year-markers">
                                 <div v-for="year in yearMarkers" :key="year" class="year-marker"
-                                    :style="{ left: ((year - 1990) / 30 * 100) + '%' }">
+                                    :style="{ left: ((year - 1960) / 60 * 100) + '%' }">
                                     <div class="tick"></div>
                                     <div class="year-label">{{ year }}</div>
                                 </div>
@@ -77,27 +77,27 @@
 
                             <!-- Selected range -->
                             <div class="selected-range" :style="{
-                                left: ((Math.min(duration1, duration2) - 120) / 180 * 100) + '%',
-                                width: (Math.abs(duration1 - duration2) / 180 * 100) + '%'
+                                left: ((Math.min(duration1, duration2) - 60) / 360 * 100) + '%',
+                                width: (Math.abs(duration1 - duration2) / 360 * 100) + '%'
                             }"></div>
 
                             <!-- Two overlapping sliders -->
                             <div class="multi-range" ref="durationRangeContainer">
                                 <!-- First slider -->
-                                <input type="range" min="120" max="300" step="5" v-model.number="duration1"
+                                <input type="range" min="60" max="420" step="10" v-model.number="duration1"
                                     class="range range1" />
 
                                 <!-- Second slider -->
-                                <input type="range" min="120" max="300" step="5" v-model.number="duration2"
+                                <input type="range" min="60" max="420" step="10" v-model.number="duration2"
                                     class="range range2" />
 
                                 <!-- Circle indicators (draggable) -->
                                 <div class="circle circle1" :style="{
-                                    left: ((duration1 - 120) / 180 * 100) + '%'
+                                    left: ((duration1 - 60) / 360 * 100) + '%'
                                 }" @mousedown="startDrag($event, 'duration1')"
                                     @touchstart="startDrag($event, 'duration1')"></div>
                                 <div class="circle circle2" :style="{
-                                    left: ((duration2 - 120) / 180 * 100) + '%'
+                                    left: ((duration2 - 60) / 360 * 100) + '%'
                                 }" @mousedown="startDrag($event, 'duration2')"
                                     @touchstart="startDrag($event, 'duration2')"></div>
                             </div>
@@ -105,7 +105,7 @@
                             <!-- Duration markers -->
                             <div class="year-markers">
                                 <div v-for="duration in durationMarkers" :key="duration" class="year-marker"
-                                    :style="{ left: ((duration - 120) / 180 * 100) + '%' }">
+                                    :style="{ left: ((duration - 60) / 360 * 100) + '%' }">
                                     <div class="tick"></div>
                                     <div class="year-label">{{ formatDuration(duration) }}</div>
                                 </div>
@@ -132,27 +132,27 @@
 
                             <!-- Selected range -->
                             <div class="selected-range" :style="{
-                                left: ((Math.min(tempo1, tempo2) - 80) / 60 * 100) + '%',
-                                width: (Math.abs(tempo1 - tempo2) / 60 * 100) + '%'
+                                left: ((Math.min(tempo1, tempo2) - 60) / 90 * 100) + '%',
+                                width: (Math.abs(tempo1 - tempo2) / 90 * 100) + '%'
                             }"></div>
 
                             <!-- Two overlapping sliders -->
                             <div class="multi-range" ref="tempoRangeContainer">
                                 <!-- First slider -->
-                                <input type="range" min="80" max="140" step="1" v-model.number="tempo1"
+                                <input type="range" min="60" max="150" step="1" v-model.number="tempo1"
                                     class="range range1" />
 
                                 <!-- Second slider -->
-                                <input type="range" min="80" max="140" step="1" v-model.number="tempo2"
+                                <input type="range" min="60" max="150" step="1" v-model.number="tempo2"
                                     class="range range2" />
 
                                 <!-- Circle indicators (draggable) -->
                                 <div class="circle circle1" :style="{
-                                    left: ((tempo1 - 80) / 60 * 100) + '%'
+                                    left: ((tempo1 - 60) / 90 * 100) + '%'
                                 }" @mousedown="startDrag($event, 'tempo1')" @touchstart="startDrag($event, 'tempo1')">
                                 </div>
                                 <div class="circle circle2" :style="{
-                                    left: ((tempo2 - 80) / 60 * 100) + '%'
+                                    left: ((tempo2 - 60) / 90 * 100) + '%'
                                 }" @mousedown="startDrag($event, 'tempo2')" @touchstart="startDrag($event, 'tempo2')">
                                 </div>
                             </div>
@@ -160,7 +160,7 @@
                             <!-- Tempo markers - BPM removed -->
                             <div class="year-markers">
                                 <div v-for="tempo in tempoMarkers" :key="tempo" class="year-marker"
-                                    :style="{ left: ((tempo - 80) / 60 * 100) + '%' }">
+                                    :style="{ left: ((tempo - 60) / 90 * 100) + '%' }">
                                     <div class="tick"></div>
                                     <div class="year-label">{{ tempo }}</div>
                                 </div>
@@ -196,19 +196,19 @@ export default {
     data() {
         return {
             // Question 5 data
-            year1: 1995,
-            year2: 2010,
-            yearMarkers: [1990, 1995, 2000, 2005, 2010, 2015, 2020],
+            year1: 1970,
+            year2: 2000,
+            yearMarkers: [1960, 1970, 1980, 1990, 2000, 2010, 2020],
 
             // Question 6 data
-            duration1: 150, // 2:30
+            duration1: 120, // 2:00
             duration2: 240, // 4:00
-            durationMarkers: [120, 150, 180, 210, 240, 270, 300], // 2:00, 2:30, 3:00, 3:30, 4:00, 4:30, 5:00
+            durationMarkers: [60, 120, 180, 240, 300, 360, 420], // 1:00, 2:00, 3:00, 4:00, 5:00, 6:00, 7:00
 
             // Question 7 data
             tempo1: 90,
             tempo2: 120,
-            tempoMarkers: [80, 90, 100, 110, 120, 130, 140],
+            tempoMarkers: [60, 75, 90, 105, 120, 135, 150],
 
             // Dragging state
             isDragging: false,
@@ -290,85 +290,85 @@ export default {
             }
 
         },
-            startDrag(event, targetProperty) {
-                event.preventDefault();
-                this.isDragging = true;
-                this.currentDragTarget = targetProperty;
+        startDrag(event, targetProperty) {
+            event.preventDefault();
+            this.isDragging = true;
+            this.currentDragTarget = targetProperty;
 
-                // Determine which container is active based on the target property
-                if (targetProperty.startsWith('year')) {
-                    this.activeContainer = this.$refs.yearRangeContainer;
-                } else if (targetProperty.startsWith('duration')) {
-                    this.activeContainer = this.$refs.durationRangeContainer;
-                } else if (targetProperty.startsWith('tempo')) {
-                    this.activeContainer = this.$refs.tempoRangeContainer;
-                }
-
-                // Add active class for visual feedback
-                const targetElement = event.target;
-                targetElement.classList.add('dragging');
-            },
-            stopDrag() {
-                if (this.isDragging) {
-                    this.isDragging = false;
-                    this.activeContainer = null;
-
-                    // Remove active class from all circles
-                    document.querySelectorAll('.circle').forEach(circle => {
-                        circle.classList.remove('dragging');
-                    });
-                }
-            },
-            onDrag(event) {
-                if (!this.isDragging || !this.currentDragTarget || !this.activeContainer) return;
-
-                // Get container's bounding rectangle
-                const containerRect = this.activeContainer.getBoundingClientRect();
-
-                // Get X position (handle both mouse and touch events)
-                let clientX;
-                if (event.touches) {
-                    clientX = event.touches[0].clientX;
-                } else {
-                    clientX = event.clientX;
-                }
-
-                // Calculate position relative to container
-                let relativeX = clientX - containerRect.left;
-
-                // Constrain to container bounds
-                relativeX = Math.max(0, Math.min(relativeX, containerRect.width));
-
-                // Convert to value based on the current target
-                let minValue, maxValue, step;
-
-                if (this.currentDragTarget.startsWith('year')) {
-                    minValue = 1990;
-                    maxValue = 2020;
-                    step = 1;
-                } else if (this.currentDragTarget.startsWith('duration')) {
-                    minValue = 120;
-                    maxValue = 300;
-                    step = 5;
-                } else if (this.currentDragTarget.startsWith('tempo')) {
-                    minValue = 80;
-                    maxValue = 140;
-                    step = 1;
-                }
-
-                const valueRange = maxValue - minValue;
-                let newValue = minValue + (relativeX / containerRect.width) * valueRange;
-
-                // Apply step if needed
-                if (step > 1) {
-                    newValue = Math.round(newValue / step) * step;
-                } else {
-                    newValue = Math.round(newValue);
-                }
-
-                // Update the appropriate property
-                this[this.currentDragTarget] = newValue;
+            // Determine which container is active based on the target property
+            if (targetProperty.startsWith('year')) {
+                this.activeContainer = this.$refs.yearRangeContainer;
+            } else if (targetProperty.startsWith('duration')) {
+                this.activeContainer = this.$refs.durationRangeContainer;
+            } else if (targetProperty.startsWith('tempo')) {
+                this.activeContainer = this.$refs.tempoRangeContainer;
             }
+
+            // Add active class for visual feedback
+            const targetElement = event.target;
+            targetElement.classList.add('dragging');
+        },
+        stopDrag() {
+            if (this.isDragging) {
+                this.isDragging = false;
+                this.activeContainer = null;
+
+                // Remove active class from all circles
+                document.querySelectorAll('.circle').forEach(circle => {
+                    circle.classList.remove('dragging');
+                });
+            }
+        },
+        onDrag(event) {
+            if (!this.isDragging || !this.currentDragTarget || !this.activeContainer) return;
+
+            // Get container's bounding rectangle
+            const containerRect = this.activeContainer.getBoundingClientRect();
+
+            // Get X position (handle both mouse and touch events)
+            let clientX;
+            if (event.touches) {
+                clientX = event.touches[0].clientX;
+            } else {
+                clientX = event.clientX;
+            }
+
+            // Calculate position relative to container
+            let relativeX = clientX - containerRect.left;
+
+            // Constrain to container bounds
+            relativeX = Math.max(0, Math.min(relativeX, containerRect.width));
+
+            // Convert to value based on the current target
+            let minValue, maxValue, step;
+
+            if (this.currentDragTarget.startsWith('year')) {
+                minValue = 1960;
+                maxValue = 2020;
+                step = 1;
+            } else if (this.currentDragTarget.startsWith('duration')) {
+                minValue = 60;
+                maxValue = 420;
+                step = 10;
+            } else if (this.currentDragTarget.startsWith('tempo')) {
+                minValue = 60;
+                maxValue = 150;
+                step = 1;
+            }
+
+            const valueRange = maxValue - minValue;
+            let newValue = minValue + (relativeX / containerRect.width) * valueRange;
+
+            // Apply step if needed
+            if (step > 1) {
+                newValue = Math.round(newValue / step) * step;
+            } else {
+                newValue = Math.round(newValue);
+            }
+
+            // Update the appropriate property
+            this[this.currentDragTarget] = newValue;
+        }
     }
 };
 </script>
