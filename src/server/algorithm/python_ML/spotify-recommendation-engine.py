@@ -260,15 +260,12 @@ def main():
         Filter songs based on user preferences of this JSON (or python dictionary) format:
         {
             artists: List[str],
+            acousticness: bool,
             year: {
                 start: int,
                 end: int
             },
             duration: {
-                start: int,
-                end: int,
-            },
-            energy: {
                 start: int,
                 end: int,
             },
@@ -301,9 +298,12 @@ def main():
         if 'duration' in preferences:
             df = df[(df['duration_ms'] >= preferences['duration']['start']) & (df['duration_ms'] <= preferences['duration']['end'])]
         
-        # Filter by energy
-        if 'energy' in preferences:
-            df = df[(df['energy'] >= preferences['energy']['start']) & (df['energy'] <= preferences['energy']['end'])]
+        # Filter by acousticness, if acoustice is True, then we want songs that are more acoustic (acousticness >= 0.5) else we want songs that are less acoustic (acousticness < 0.5)
+        if 'acousticness' in preferences:
+            if preferences['acousticness']:
+                df = df[df['acousticness'] >= 0.5]
+            else:
+                df = df[df['acousticness'] < 0.5]
         
         # Filter by tempo
         if 'tempo' in preferences:

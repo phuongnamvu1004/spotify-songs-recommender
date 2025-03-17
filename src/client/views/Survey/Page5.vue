@@ -265,16 +265,16 @@ export default {
                     },
                     body: JSON.stringify({
                         year: {
-                            min: answers.yearRange[0],
-                            max: answers.yearRange[1]
+                            start: answers.yearRange[0],
+                            end: answers.yearRange[1]
                         },
                         duration: {
-                            min: answers.durationRange[0],
-                            max: answers.durationRange[1]
+                            start: answers.durationRange[0] * 1000,
+                            end: answers.durationRange[1] * 1000
                         },
                         tempo: {
-                            min: answers.tempoRange[0],
-                            max: answers.tempoRange[1]
+                            start: answers.tempoRange[0],
+                            end: answers.tempoRange[1]
                         }
                     })
                 });
