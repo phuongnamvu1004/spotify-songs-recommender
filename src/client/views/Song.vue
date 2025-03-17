@@ -5,16 +5,41 @@
       <div class="absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full bg-blue-700 opacity-20 blur-3xl"></div>
     </div>
     <div class="p-5 relative z-10">
+      <!-- Hiển thị thông tin về lựa chọn nghệ sĩ và tùy chọn nhạc cụ -->
+      <div v-if="userPreferences.artists.length > 0 || userPreferences.acousticness !== null"
+        class="bg-gray-800/50 rounded-lg p-4 mb-6">
+        <h2 class="text-white text-xl font-bold mb-3">Your Music Preferences</h2>
+
+        <div v-if="userPreferences.artists.length > 0" class="mb-3">
+          <p class="text-gray-400 mb-2">Selected Artists:</p>
+          <div class="flex flex-wrap gap-2">
+            <span v-for="(artist, index) in userPreferences.artists" :key="index"
+              class="px-3 py-1 bg-purple-900 text-purple-200 rounded-full text-sm">
+              {{ cleanArtistDisplay(artist) }}
+            </span>
+          </div>
+        </div>
+
+        <div v-if="userPreferences.acousticness !== null" class="mb-1">
+          <p class="text-gray-400 mb-2">Instruments Preference:</p>
+          <span class="px-3 py-1 bg-blue-900 text-blue-200 rounded-full text-sm">
+            {{ userPreferences.acousticness === true ? 'Include instruments' : 'No instruments' }}
+          </span>
+        </div>
+      </div>
+
       <h1
         class="animate-gradient-x mb-8 bg-gradient-to-r from-green-400 via-[#1DB954] to-blue-500 bg-clip-text text-2xl font-bold text-transparent md:text-4xl">
         My Recommended Playlists
       </h1>
 
       <div v-if="loading" class="text-center my-12">
-        <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-spotify-green border-r-transparent align-middle"></div>
+        <div
+          class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-spotify-green border-r-transparent align-middle">
+        </div>
         <p class="mt-4 text-spotify-green text-xl">Loading music...</p>
       </div>
-      
+
       <div v-else-if="error" class="text-red-500 text-center p-4 bg-red-500/10 rounded-lg">{{ error }}</div>
 
       <!-- Recommended Songs View -->
@@ -22,34 +47,37 @@
         <div class="bg-gray-800/50 rounded-lg p-6 mb-6">
           <h2 class="text-white text-2xl font-bold mb-4">Songs recommended based on your preferences</h2>
           <p class="text-gray-400 mb-4">Based on your music survey, we've found songs that match your taste.</p>
-          
+
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
-            <div v-for="song in recommendedSongs" :key="song.id" 
-                 class="bg-gray-800 rounded-lg p-3 flex flex-col transition-transform hover:-translate-y-1 hover:bg-gray-700">
+            <div v-for="song in recommendedSongs" :key="song.id"
+              class="bg-gray-800 rounded-lg p-3 flex flex-col transition-transform hover:-translate-y-1 hover:bg-gray-700">
               <img :src="song.imgURL || '/default-track.png'" class="w-full aspect-square object-cover rounded-md mb-3">
               <div class="flex-1">
                 <p class="font-bold text-white truncate">{{ song.name }}</p>
-                <p class="text-sm text-gray-400 truncate mt-1">{{ song.artists }}</p>
-                
+                <p class="text-sm text-gray-400 truncate mt-1">{{ displayArtist(song.artists) }}</p>
+
                 <div class="flex flex-wrap gap-1 mt-2">
                   <span class="text-xs px-2 py-1 rounded-full bg-green-900 text-green-200">
                     {{ formatDuration(song.duration_ms) }}
                   </span>
-                  <span v-if="song.popularity > 70" class="text-xs px-2 py-1 rounded-full bg-yellow-900 text-yellow-200">
+                  <span v-if="song.popularity > 70"
+                    class="text-xs px-2 py-1 rounded-full bg-yellow-900 text-yellow-200">
                     Popular
                   </span>
                 </div>
               </div>
-              
+
               <div class="mt-3 pt-3 border-t border-gray-700">
                 <audio v-if="song.preview_url" controls class="w-full h-8 mt-1" :src="song.preview_url"></audio>
                 <p v-else class="text-xs text-gray-500 mt-1 text-center">No preview available</p>
-                
+
                 <div class="flex justify-between mt-3">
-                  <button class="px-3 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs rounded-full flex items-center">
+                  <button
+                    class="px-3 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 text-xs rounded-full flex items-center">
                     ♡ Save
                   </button>
-                  <button class="px-3 py-1 bg-spotify-green text-white rounded-full text-xs hover:bg-green-600 flex items-center">
+                  <button
+                    class="px-3 py-1 bg-spotify-green text-white rounded-full text-xs hover:bg-green-600 flex items-center">
                     <span>Play</span>
                   </button>
                 </div>
@@ -103,12 +131,12 @@
 
         <!-- Playlist details header -->
         <div class="flex flex-col md:flex-row bg-gray-800/50 rounded-lg p-4 mb-6">
-          <img :src="selectedPlaylist.images && selectedPlaylist.images[0]?.url || '/default-playlist.png'" 
-               :alt="selectedPlaylist.name"
-               class="w-40 h-40 rounded-md object-cover">
+          <img :src="selectedPlaylist.images && selectedPlaylist.images[0]?.url || '/default-playlist.png'"
+            :alt="selectedPlaylist.name" class="w-40 h-40 rounded-md object-cover">
           <div class="md:ml-6 mt-4 md:mt-0">
             <h2 class="text-white text-2xl font-bold">{{ selectedPlaylist.name }}</h2>
-            <p class="text-gray-400">By {{ selectedPlaylist.owner ? selectedPlaylist.owner.display_name : 'Unknown' }}</p>
+            <p class="text-gray-400">By {{ selectedPlaylist.owner ? selectedPlaylist.owner.display_name : 'Unknown' }}
+            </p>
             <p class="text-gray-400 mt-2">{{ selectedPlaylist.tracks ? selectedPlaylist.tracks.total : 0 }} tracks</p>
             <p class="text-gray-400 mt-1" v-if="selectedPlaylist.description">{{ selectedPlaylist.description }}</p>
 
@@ -131,8 +159,11 @@
               class="w-full aspect-square object-cover rounded-md mb-3">
             <div class="flex-1">
               <p class="font-bold text-white truncate">{{ track.name }}</p>
-              <p class="text-sm text-gray-400 truncate mt-1">{{ track.artists ? track.artists.map(a => a.name).join(", ") : 'Unknown Artist' }}</p>
-              <p class="text-xs text-gray-500 mt-1">{{ track.album && track.album.release_date ? new Date(track.album.release_date).getFullYear() : 'Unknown' }}</p>
+              <p class="text-sm text-gray-400 truncate mt-1">
+                {{ track.artists ? displayTrackArtists(track.artists) : 'Unknown Artist' }}
+              </p>
+              <p class="text-xs text-gray-500 mt-1">{{ track.album && track.album.release_date ? new
+                Date(track.album.release_date).getFullYear() : 'Unknown' }}</p>
 
               <div class="flex flex-wrap gap-1 mt-2">
                 <span v-for="(artist, idx) in (track.artists || []).slice(0, 1)" :key="idx"
@@ -153,10 +184,12 @@
               <p v-else class="text-xs text-gray-500 mt-1 text-center">No preview available</p>
 
               <div class="flex justify-between mt-3">
-                <button class="px-3 py-1 text-xs rounded-full flex items-center bg-gray-700 text-gray-300 hover:bg-gray-600">
+                <button
+                  class="px-3 py-1 text-xs rounded-full flex items-center bg-gray-700 text-gray-300 hover:bg-gray-600">
                   <span>♡ Save</span>
                 </button>
-                <button class="px-3 py-1 bg-spotify-green text-white rounded-full text-xs hover:bg-green-600 flex items-center">
+                <button
+                  class="px-3 py-1 bg-spotify-green text-white rounded-full text-xs hover:bg-green-600 flex items-center">
                   <span>Play</span>
                 </button>
               </div>
@@ -175,7 +208,8 @@
         </svg>
         <p class="text-xl font-bold mb-2">No music found</p>
         <p class="text-gray-400 mb-6">Complete the survey to get personalized recommendations</p>
-        <button @click="goToSurvey" class="bg-spotify-green hover:bg-green-600 text-white px-6 py-2 rounded-full transition-colors">
+        <button @click="goToSurvey"
+          class="bg-spotify-green hover:bg-green-600 text-white px-6 py-2 rounded-full transition-colors">
           Take the Survey
         </button>
       </div>
@@ -204,14 +238,20 @@ export default {
       selectedPlaylist: null,
       tracks: [],
       loading: true,
-      error: null
+      error: null,
+      userPreferences: {
+        artists: [],
+        acousticness: null
+      }
     }
   },
   async mounted() {
     try {
+      this.processQueryParams();
+
       // Fetch recommended songs based on survey results
       await this.fetchRecommendedSongs();
-      
+
       // Also fetch user's playlists
       await this.fetchPlaylists();
     } catch (error) {
@@ -222,29 +262,173 @@ export default {
     }
   },
   methods: {
+    processQueryParams() {
+
+      if (this.$route.query.artists) {
+        const artistString = this.$route.query.artists;
+        console.log('Raw artist data received:', artistString);
+
+        if (artistString.match(/^\[.*\]$/)) {
+
+          this.userPreferences.artists = this.extractArtistsFromArrayString(artistString);
+        } else if (artistString.includes('|')) {
+          this.userPreferences.artists = artistString.split('|').map(item => item.trim());
+        } else {
+
+          this.userPreferences.artists = [this.cleanArtistName(artistString)];
+        }
+
+        console.log('Processed artists:', this.userPreferences.artists);
+      }
+      if (this.$route.query.acousticness) {
+        const acousticnessValue = this.$route.query.acousticness;
+        if (acousticnessValue === 'yes') {
+          this.userPreferences.acousticness = true;
+        } else if (acousticnessValue === 'no') {
+          this.userPreferences.acousticness = false;
+        }
+      }
+    },
+
+    extractArtistsFromArrayString(str) {
+      const regex = /['"]([^'"]+)['"]/g;
+      const matches = [];
+      let match;
+
+      while ((match = regex.exec(str)) !== null) {
+        matches.push(match[1]);
+      }
+      if (matches.length > 0) {
+        return matches;
+      } else {
+        return this.cleanArrayString(str);
+      }
+    },
+
+    cleanArrayString(str) {
+
+      str = str.replace(/^\[|\]$/g, '');
+
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      let quoteChar = '';
+
+      for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+
+        if ((char === "'" || char === '"') && (i === 0 || str[i - 1] !== '\\')) {
+          if (!inQuotes) {
+            inQuotes = true;
+            quoteChar = char;
+          } else if (char === quoteChar) {
+            inQuotes = false;
+          } else {
+            current += char;
+          }
+        } else if (char === ',' && !inQuotes) {
+          result.push(current.trim().replace(/^['"]|['"]$/g, ''));
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+
+      if (current) {
+        result.push(current.trim().replace(/^['"]|['"]$/g, ''));
+      }
+
+      return result.filter(item => item.length > 0);
+    },
+
+    cleanArtistName(name) {
+      return name.replace(/^\['|'\]$|^"|"$|^'|'$/g, '');
+    },
+
+    cleanArtistDisplay(artistString) {
+      if (!artistString) return 'Unknown Artist';
+
+      if (typeof artistString === 'string') {
+        return artistString
+          .replace(/\[|\]|'|"|\\|\//g, '')
+          .replace(/^\s+|\s+$/g, '');
+      }
+
+      return artistString;
+    },
+
+    displayArtist(artists) {
+      if (!artists) return 'Unknown Artist';
+
+      if (typeof artists === 'string') {
+        return this.cleanArtistDisplay(artists);
+      }
+      if (Array.isArray(artists)) {
+        return artists.map(artist => {
+          if (typeof artist === 'string') {
+            return this.cleanArtistDisplay(artist);
+          } else if (typeof artist === 'object' && artist.name) {
+            return artist.name;
+          }
+          return '';
+        }).filter(name => name).join(', ');
+      }
+
+      return 'Unknown Artist';
+    },
+
+    displayTrackArtists(artists) {
+      if (!artists || !Array.isArray(artists)) return 'Unknown Artist';
+
+      return artists
+        .map(artist => artist.name || '')
+        .filter(name => name)
+        .join(', ');
+    },
+
     async fetchRecommendedSongs() {
       try {
-        const response = await fetch('/api/recommended-songs');
+        let url = '/api/recommended-songs';
+        if (this.userPreferences.artists.length > 0 || this.userPreferences.acousticness !== null) {
+          const queryParams = new URLSearchParams();
+
+          if (this.userPreferences.artists.length > 0) {
+            const cleanedArtists = this.userPreferences.artists.map(artist => this.cleanArtistDisplay(artist));
+            queryParams.append('artists', JSON.stringify(cleanedArtists));
+          }
+
+          if (this.userPreferences.acousticness !== null) {
+            queryParams.append('acousticness', this.userPreferences.acousticness);
+          }
+
+          url += `?${queryParams.toString()}`;
+        }
+
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
-        
         const data = await response.json();
-        this.recommendedSongs = data;
+        this.recommendedSongs = data.map(song => {
+          if (song.artists) {
+          }
+          return song;
+        });
+
         console.log('Recommended songs loaded:', this.recommendedSongs.length);
       } catch (error) {
         console.warn('Could not fetch recommended songs:', error);
         this.recommendedSongs = [];
       }
     },
-    
+
     async fetchPlaylists() {
       try {
         const response = await fetch('/api/get-playlists');
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
-        
+
         const data = await response.json();
         this.playlists = data.items || [];
       } catch (error) {
@@ -252,18 +436,18 @@ export default {
         this.playlists = [];
       }
     },
-    
+
     async fetchPlaylistTracks(playlist) {
       this.selectedPlaylist = playlist;
       this.tracks = [];
       this.loading = true;
-      
+
       try {
         const response = await fetch(`/api/playlist-tracks/${playlist.id}`);
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
-        
+
         const data = await response.json();
         this.tracks = data.items.map(item => {
           const track = item.track || {};
@@ -277,14 +461,14 @@ export default {
         this.loading = false;
       }
     },
-    
+
     formatDuration(ms) {
       if (!ms) return '0:00';
       const minutes = Math.floor(ms / 60000);
       const seconds = Math.floor((ms % 60000) / 1000);
       return `${minutes}:${seconds.toString().padStart(2, '0')}`;
     },
-    
+
     formatPlaylistDuration(playlist) {
       // Estimate based on average track length (3:30)
       const estimatedMinutes = Math.round((playlist.tracks?.total || 0) * 3.5);
@@ -295,7 +479,7 @@ export default {
       const minutes = estimatedMinutes % 60;
       return `${hours} hr ${minutes} min`;
     },
-    
+
     goToSurvey() {
       try {
         this.$router.push('/Survey/Page1');
@@ -317,9 +501,11 @@ export default {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -347,6 +533,7 @@ export default {
 .hover\:scale {
   transition: transform 0.2s ease-in-out;
 }
+
 .hover\:scale:hover {
   transform: scale(1.03);
 }
