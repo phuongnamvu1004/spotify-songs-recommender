@@ -94,11 +94,11 @@
         this.currentAnswer = option;
       },
       goToPage3() {
-        this.$router.push('/Survey/Page3');
+        this.$router.push('/survey/page3');
       },
       goToPage5() {
         console.log('Navigating to Page5');
-        this.$router.push('/Survey/Page5');
+        this.$router.push('/survey/page5');
       }
     }
   };

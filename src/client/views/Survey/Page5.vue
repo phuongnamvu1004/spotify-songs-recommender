@@ -237,7 +237,7 @@ export default {
             return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         },
         goTopage4() {
-            this.$router.push('/Survey/Page4');
+            this.$router.push('/survey/page4');
         },
         async submitAnswers() {
             // Store answers with sorted values
@@ -281,7 +281,7 @@ export default {
 
                 if (response.ok) {
                     console.log('Music preferences saved successfully');
-                    this.$router.push('/Song');
+                    this.$router.push('/recommended-songs');
                 } else {
                     console.error('Failed to save music preferences');
                 }

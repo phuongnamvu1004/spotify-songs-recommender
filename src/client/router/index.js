@@ -23,32 +23,32 @@ const router = createRouter({
       component: Playlists
     },
     { 
-      path: '/Survey/Page1',
+      path: '/survey/page1',
       name: 'Page1',
       component: Page1 
     },
     {
-      path: '/Survey/Page2',
+      path: '/survey/page2',
       name:'Page2',
       component: Page2,
     },
     {
-      path: '/Survey/Page3',
+      path: '/survey/page3',
       name:'Page3',
       component: Page3,
     },
     {
-      path: '/Survey/Page4',
+      path: '/survey/page4',
       name:'Page4',
       component: Page4,
     },
     {
-      path: '/Survey/Page5',
+      path: '/survey/page5',
       name:'Page5',
       component: Page5,
     },
     {
-      path: '/Song',
+      path: '/recommended-songs',
       name: 'Song',
       component: Song,
     },

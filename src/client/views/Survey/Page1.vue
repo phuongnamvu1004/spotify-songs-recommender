@@ -77,7 +77,7 @@ export default {
         },
         goToPage2() {
             this.$router.push({
-                path: "/Survey/Page2",
+                path: "/survey/page2",
                 query: { answers: this.selectedAnswers.join(',') }
             });
         }

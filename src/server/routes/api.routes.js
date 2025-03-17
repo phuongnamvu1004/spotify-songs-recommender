@@ -41,14 +41,36 @@ router.get("/playlist-tracks/:playlistId", requireToken, async (req, res) => {
   }
 });
 
+
 router.get("/recommended-songs", requireToken, async (req, res) => {
   try {
+    // Initialize user data if needed
+    req.session.userData = req.session.userData || {};
+    
+    // Convert preferences to string for comparison
+    const currentPrefsString = JSON.stringify(req.session.userData?.preferences || {});
+    const prevPrefsString = JSON.stringify(req.session.userData?.prevPreferences || {});
+    
+    // Check if we already have recommendations for current preferences
+    if (
+      prevPrefsString === currentPrefsString &&
+      req.session.userData?.recommendedSongs
+    ) {
+      console.log('Using cached recommended songs');
+      return res.json(req.session.userData.recommendedSongs);
+    }
+    
+    console.log('Generating new recommendations...');
+    
+    // Store current preferences as previous preferences
+    req.session.userData.prevPreferences = JSON.parse(currentPrefsString);
+    
     const pythonProcess = spawn("python3", [
       path.join(
         __dirname,
         "../algorithm/python_ML/spotify-recommendation-engine.py"
       ),
-      req.session.access_token, // Pass the access token as an argument
+      req.session.access_token,
       req.session.userData?.preferences
         ? JSON.stringify(req.session.userData.preferences)
         : "{}",
@@ -87,7 +109,18 @@ router.get("/recommended-songs", requireToken, async (req, res) => {
           imgURL: data.tracks[index].album.images[0]?.url,
         }));
 
-        res.json(updatedTracks);
+        // Save recommendations to session
+        req.session.userData.recommendedSongs = updatedTracks;
+        
+        // Save session first, then send response
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ error: "Failed to save session data" });
+          }
+          // Send response only after session is saved
+          res.json(updatedTracks);
+        });
       } catch (error) {
         console.error("Error:", error);
         res.status(500).json({ error: "Failed to process recommended songs" });
@@ -101,17 +134,9 @@ router.get("/recommended-songs", requireToken, async (req, res) => {
 
 router.post("/post-artists-preferences", requireToken, async (req, res) => {
   try {
-    if (!req.session.userData) {
-      req.session.userData = {};
-    }
-    if (!req.session.userData.preferences) {
-      req.session.userData.preferences = {};
-    }
-    if (!req.session.userData.preferences.artists) {
-      req.session.userData.preferences.artists = [];
-    }
-    const ans = req.body;
-    req.session.userData.preferences.artists = ans?.artists || [];
+    req.session.userData = req.session.userData || {};
+    req.session.userData.preferences = req.session.userData.preferences || {};
+    req.session.userData.preferences.artists = req.body.artists || [];
 
     // Save the session and send response
     req.session.save((err) => {
@@ -130,64 +155,37 @@ router.post("/post-artists-preferences", requireToken, async (req, res) => {
   }
 });
 
-router.post(
-  "/post-acousticness-preferences",
-  requireToken,
-  async (req, res) => {
-    try {
-      if (!req.session.userData) {
-        req.session.userData = {};
-      }
-      if (!req.session.userData.preferences) {
-        req.session.userData.preferences = {};
-      }
-      if (!req.session.userData.preferences.acousticness) {
-        req.session.userData.preferences.acousticness = false;
-      }
-      const ans = req.body;
+router.post("/post-acousticness-preferences", requireToken, async (req, res) => {
+  try {
+    req.session.userData = req.session.userData || {};
+    req.session.userData.preferences = req.session.userData.preferences || {};
+    req.session.userData.preferences.acousticness = req.body.acousticness || false;
 
-      req.session.userData.preferences.acousticness =
-        ans?.acousticness || false;
-      req.session.save((err) => {
-        if (err) {
-          console.error("Session save error:", err);
-          return res.status(500).json({ error: "Failed to save preferences" });
-        }
-        res.json({
-          success: true,
-          message: "Preferences saved successfully",
-        });
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ error: "Failed to save preferences" });
+      }
+      res.json({
+        success: true,
+        message: "Preferences saved successfully",
       });
-    } catch (error) {
-      console.error("Error saving preferences:", error);
-      res.status(500).json({ error: "Failed to save preferences" });
-    }
+    });
+  } catch (error) {
+    console.error("Error saving preferences:", error);
+    res.status(500).json({ error: "Failed to save preferences" });
   }
-);
+});
 
 router.post("/post-remaining-preferences", requireToken, async (req, res) => {
   try {
     const remainingPreferences = req.body;
 
-    if (!req.session.userData) {
-      req.session.userData = {};
-    }
-    if (!req.session.userData.preferences) {
-      req.session.userData.preferences = {};
-    }
-    if (!req.session.userData.preferences.year) {
-      req.session.userData.preferences.year = {};
-    }
-    if (!req.session.userData.preferences.duration) {
-      req.session.userData.preferences.duration = {};
-    }
-    if (!req.session.userData.preferences.tempo) {
-      req.session.userData.preferences.tempo = {};
-    }
-
-    req.session.userData.preferences.year = remainingPreferences.year;
-    req.session.userData.preferences.duration = remainingPreferences.duration;
-    req.session.userData.preferences.tempo = remainingPreferences.tempo;
+    req.session.userData = req.session.userData || {};
+    req.session.userData.preferences = req.session.userData.preferences || {};
+    req.session.userData.preferences.year = remainingPreferences.year || {};
+    req.session.userData.preferences.duration = remainingPreferences.duration || {};
+    req.session.userData.preferences.tempo = remainingPreferences.tempo || {};
 
     req.session.save((err) => {
       if (err) {

@@ -156,20 +156,20 @@ export default {
         },
         goToPage2() {
             try {
-                this.$router.push('/Survey/Page2');
+                this.$router.push('/survey/page2');
             } catch (error) {
                 console.error('Navigation error:', error);
                 // Fallback if router isn't available
-                window.location.href = '/Survey/Page2';
+                window.location.href = '/survey/page2';
             }
         },
         goToPage4() {
             try {
-                this.$router.push('/Survey/Page4');
+                this.$router.push('/survey/page4');
             } catch (error) {
                 console.error('Navigation error:', error);
                 // Fallback if router isn't available
-                window.location.href = '/Survey/Page4';
+                window.location.href = '/survey/page4';
             }
         }
     }

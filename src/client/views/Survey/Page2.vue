@@ -149,7 +149,7 @@ export default {
             this.isCustomValid = this.customArtist.trim().length > 0;
         },
         goToPage1() {
-            this.$router.push('/Survey/Page1');
+            this.$router.push('/survey/page1');
         },
         async goToPage3() {
             if (!this.isNextEnabled || this.isLoading) return;
@@ -180,7 +180,7 @@ export default {
 
                 console.log('Successfully posted preferences, navigating to Page3...');
                 await this.$router.push({
-                    path: '/Survey/Page3',
+                    path: '/survey/page3',
                     query: { answers: answers.join(',') }
                 });
             } catch (error) {
