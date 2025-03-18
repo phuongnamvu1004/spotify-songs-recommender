@@ -288,8 +288,11 @@ def main():
         
         # Filter by artists
         if 'artists' in preferences:
-            df = df[df['artists_upd'].apply(lambda x: any(artist in x for artist in preferences['artists']))]
-        
+            # for songs that has artists in the preferences -> increase the ['sim'] column by 20%
+            df['sim'] = df.apply(
+                lambda row: row['sim'] * 1.2 if any(artist in row['artists_upd'] for artist in preferences['artists']) else row['sim'], 
+                axis=1
+            )        
         # Filter by year
         if 'year' in preferences:
             df = df[(df['year'] >= preferences['year']['start']) & (df['year'] <= preferences['year']['end'])]
@@ -301,9 +304,15 @@ def main():
         # Filter by acousticness, if acoustice is True, then we want songs that are more acoustic (acousticness >= 0.5) else we want songs that are less acoustic (acousticness < 0.5)
         if 'acousticness' in preferences:
             if preferences['acousticness']:
-                df = df[df['acousticness'] >= 0.5]
+                df['sim'] = df.apply(
+                    lambda row: row['sim'] * 1.2 if row['acousticness'] >= 0.5 else row['sim'], 
+                    axis=1
+                )  
             else:
-                df = df[df['acousticness'] < 0.5]
+                df['sim'] = df.apply(
+                    lambda row: row['sim'] * 1.2 if row['acousticness'] < 0.5 else row['sim'], 
+                    axis=1
+                )
         
         # Filter by tempo
         if 'tempo' in preferences:
