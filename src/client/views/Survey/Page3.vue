@@ -13,14 +13,12 @@
                 </h1>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-16">
-                <div 
-                    class="flex flex-col items-center justify-center p-6 bg-gray-600 rounded-lg cursor-pointer hover:bg-gray-500 transition-colors border-2" 
+                <div class="flex flex-col items-center justify-center p-6 bg-gray-600 rounded-lg cursor-pointer hover:bg-gray-500 transition-colors border-2"
                     :class="selectedOption === 'yes' ? 'border-green-600' : 'border-transparent hover:border-green-600'"
-                    @click="selectOption('yes')"
-                >
+                    @click="selectOption('yes')">
                     <div class="mb-5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-white" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905a3.61 3.61 0 01-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                         </svg>
@@ -34,14 +32,12 @@
                     </div>
                 </div>
 
-                <div 
-                    class="flex flex-col items-center justify-center p-6 bg-gray-600 rounded-lg cursor-pointer hover:bg-gray-500 transition-colors border-2" 
+                <div class="flex flex-col items-center justify-center p-6 bg-gray-600 rounded-lg cursor-pointer hover:bg-gray-500 transition-colors border-2"
                     :class="selectedOption === 'no' ? 'border-green-600' : 'border-transparent hover:border-green-600'"
-                    @click="selectOption('no')"
-                >
+                    @click="selectOption('no')">
                     <div class="mb-5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-white" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2" />
                         </svg>
@@ -71,9 +67,7 @@
                     </button>
                     <button @click="goToPage4"
                         class="flex h-10 w-10 items-center justify-center rounded-md bg-gray-700 transition-colors hover:bg-[#77d397]"
-                        :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
-                        :disabled="isLoading"
-                        id="next-button">
+                        :class="{ 'opacity-50 cursor-not-allowed': isLoading }" :disabled="isLoading" id="next-button">
                         <template v-if="isLoading">
                             <!-- Loading spinner -->
                             <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -86,7 +80,8 @@
                         <template v-else>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </template>
                     </button>
@@ -117,10 +112,10 @@ export default {
         async nextQuestion() {
             if (this.isLoading) return;
             this.isLoading = true;
-            
+
             try {
                 console.log('Selected option:', this.selectedOption);
-                
+
                 try {
                     const response = await fetch("/api/post-acousticness-preferences", {
                         method: 'POST',
@@ -131,7 +126,7 @@ export default {
                             acousticness: this.selectedOption === 'yes'
                         })
                     });
-                    
+
                     if (!response.ok) {
                         console.warn(`API request failed with status: ${response.status}`);
                     } else {
@@ -141,7 +136,7 @@ export default {
                     console.warn('API request failed:', apiError);
                     // Continue to next page despite API error
                 }
-                
+
                 this.goToPage4();
             } catch (error) {
                 console.error('Error in nextQuestion:', error);
@@ -178,19 +173,21 @@ export default {
 
 <style scoped>
 .animate-gradient-x {
-  background-size: 200% 200%;
-  animation: gradient-x 2s ease infinite;
+    background-size: 200% 200%;
+    animation: gradient-x 2s ease infinite;
 }
 
 @keyframes gradient-x {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 </style>

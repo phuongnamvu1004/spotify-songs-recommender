@@ -19,9 +19,9 @@
                             ? selectAnswer(option.value)
                             : selectCustomAnswer(option.value)
                         " :class="[
-                'relative flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors hover:bg-gray-700',
-                isSelected(option.value) ? 'border-green-600 bg-gray-700' : 'border-gray-500',
-            ]">
+                            'relative flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors hover:bg-gray-700',
+                            isSelected(option.value) ? 'border-green-600 bg-gray-700' : 'border-gray-500',
+                        ]">
                         <span class="text-xl text-white">{{ option.label }}</span>
                         <div
                             class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-gray-800">
@@ -35,38 +35,41 @@
                     <div class="rounded-lg border border-gray-500 p-4">
                         <label for="custom-artist" class="mb-2 block text-lg text-white">Please specify your favorite
                             artists:</label>
-                        
+
                         <!-- Artist chips/tags display -->
                         <div v-if="customArtists.length > 0" class="mb-3 flex flex-wrap gap-2">
-                            <div v-for="(artist, index) in customArtists" :key="index" 
+                            <div v-for="(artist, index) in customArtists" :key="index"
                                 class="flex items-center rounded-full bg-gray-700 px-3 py-1 text-white transition-colors hover:bg-gray-600">
                                 <span>{{ artist }}</span>
                                 <button @click="removeArtist(index)" class="ml-2 text-gray-300 hover:text-white"
                                     title="Remove artist">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
                         </div>
-                        
+
                         <!-- Counter for artists -->
                         <div v-if="customArtists.length > 0" class="mb-2 text-sm text-gray-400">
                             {{ customArtists.length }} {{ customArtists.length === 1 ? 'artist' : 'artists' }} added
                         </div>
-                        
+
                         <!-- Input with add button -->
                         <div class="flex">
                             <input type="text" id="custom-artist" v-model="currentArtist"
                                 class="flex-grow rounded-l-md border border-gray-600 bg-gray-800 p-3 text-white focus:border-purple-300 focus:outline-none"
                                 placeholder="Enter artist name here" @keydown.enter.prevent="addArtist" />
-                            
-                            <button @click="addArtist" 
+
+                            <button @click="addArtist"
                                 class="rounded-r-md bg-gray-700 px-4 text-white transition-colors hover:bg-gray-600 disabled:opacity-50"
-                                :disabled="!isCurrentArtistValid"
-                                title="Add artist">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                :disabled="!isCurrentArtistValid" title="Add artist">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
                                 </svg>
                             </button>
                         </div>
@@ -146,7 +149,7 @@ export default {
             // If G is one of the selected options, make sure there's at least one custom artist
             const hasStandardSelection = this.selectedAnswers.some(option => option !== 'G');
             const hasValidCustomSelection = this.isSelected('G') && this.customArtists.length > 0;
-            
+
             return hasStandardSelection || hasValidCustomSelection;
         },
         isCurrentArtistValid() {
@@ -191,7 +194,7 @@ export default {
         addArtist() {
             if (this.isCurrentArtistValid) {
                 const artistName = this.currentArtist.trim();
-                
+
                 // Check for duplicates before adding
                 if (!this.customArtists.includes(artistName)) {
                     // Add current artist to the array
@@ -210,7 +213,7 @@ export default {
                             this.error = null;
                         }
                     }, 2000);
-                    
+
                     // Clear the input
                     this.currentArtist = '';
                 }
@@ -275,18 +278,18 @@ export default {
             const standardArtists = this.selectedAnswers
                 .filter(option => option !== 'G')
                 .map(option => artistMap[option]);
-            
+
             // Get custom artists if "Other" is selected
             const otherArtists = this.isSelected('G') ? this.customArtists : [];
-            
+
             // Combine both lists
             return [...standardArtists, ...otherArtists];
         },
-        
+
         // Add method to check if current input matches an existing entry
         isDuplicateArtist() {
             if (!this.currentArtist) return false;
-            return this.customArtists.some(artist => 
+            return this.customArtists.some(artist =>
                 artist.toLowerCase() === this.currentArtist.trim().toLowerCase()
             );
         }
