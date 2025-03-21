@@ -1,6 +1,10 @@
 # Spotify Song Recommender Web
 
+<br>
+
 ## Link: ...
+
+<br>
 
 ## Project Description
 ### Overview
@@ -38,7 +42,27 @@ This is a Node.js-based web application which helps recommend Spotify songs from
 - pip (Python)
 
 ### Machine Learning algorithm specifications
-...
+**Dataset used**
+Kaggle 160k Spotify songs from 1921 to 2020 (Sorted):
+- Link: https://www.kaggle.com/datasets/fcpercival/160k-spotify-songs-sorted?resource=download
+
+The Machine Learning algorithm used in the recommendation system is Content-based Filtering algorithm (CBF), conducting in 5 steps:
+**Step 1: Data Exploration/Preparation**
+- Cleaning data (mostly for the "artist" column since it is not in this algorithm desired format)
+
+**Step 2: Feature Engineering**
+- Normalize continuous variables (e.g., acousticness, energy, tempo).
+- Apply One-Hot Encoding (OHE) to categorical variables such as Year and Popularity.
+- Generate TF-IDF (Term Frequency-Inverse Document Frequency) features for artist genres to capture textual information.
+**Step 3: Fetching user data from SpotifyAPI**
+- Retrieve user-specific data, such as playlists and listening history, via API routes defined in the Express backend server (running on port 3000)
+
+**Step 4: Create playlist vectors**
+- Summarize a user's playlist into a single vector by aggregating features of all songs in the playlist. This vector represents the user's music preferences.
+
+**Step 5: Generate Recommendations**
+- Compute similarity scores between the user's playlist vector and all other songs in the dataset using cosine similarity.
+- Rank the songs in descending order of similarity and return the Top 50 recommendations.
 
 ### Project setup
 **Installing Node modules***

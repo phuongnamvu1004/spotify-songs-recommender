@@ -254,7 +254,7 @@ def main():
 
     # print(complete_feature_set_playlist_vector_soul.shape)
 
-    ### 5. Generate Recommendations (to fix)
+    ### 5. Generate Recommendations 
     def filter_by_preferences(df, preferences):
         """ 
         Filter songs based on user preferences of this JSON (or python dictionary) format:
