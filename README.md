@@ -1,10 +1,6 @@
 # Spotify Song Recommender Web
 
-<br>
-
 ## Link: ...
-
-<br>
 
 ## Project Description
 ### Overview
@@ -47,6 +43,7 @@ Kaggle 160k Spotify songs from 1921 to 2020 (Sorted):
 - Link: https://www.kaggle.com/datasets/fcpercival/160k-spotify-songs-sorted?resource=download
 
 The Machine Learning algorithm used in the recommendation system is Content-based Filtering algorithm (CBF), conducting in 5 steps:
+
 **Step 1: Data Exploration/Preparation**
 - Cleaning data (mostly for the "artist" column since it is not in this algorithm desired format)
 
