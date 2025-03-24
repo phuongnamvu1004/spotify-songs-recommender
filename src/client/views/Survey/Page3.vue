@@ -117,7 +117,7 @@ export default {
                 console.log('Selected option:', this.selectedOption);
 
                 try {
-                    const response = await fetch("/api/post-acousticness-preferences", {
+                    const response = await fetch("http://localhost:3000/api/post-acousticness-preferences", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

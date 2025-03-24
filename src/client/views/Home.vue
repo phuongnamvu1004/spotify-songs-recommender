@@ -45,7 +45,7 @@ export default {
   methods: {
     async checkAuthStatus() {
       try {
-        const response = await fetch("/api/auth-status");
+        const response = await fetch("http://localhost:3000/api/auth-status");
         const data = await response.json();
         this.isAuthenticated = data.isAuthenticated;
       } catch (error) {

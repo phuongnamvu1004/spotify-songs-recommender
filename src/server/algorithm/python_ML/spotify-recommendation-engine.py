@@ -288,11 +288,8 @@ def main():
         
         # Filter by artists
         if 'artists' in preferences:
-            # for songs that has artists in the preferences -> increase the ['sim'] column by 20%
-            df['sim'] = df.apply(
-                lambda row: row['sim'] * 1.2 if any(artist in row['artists_upd'] for artist in preferences['artists']) else row['sim'], 
-                axis=1
-            )        
+            df = df[df['artists_upd'].apply(lambda x: any(artist in x for artist in preferences['artists']))]
+                  
         # Filter by year
         if 'year' in preferences:
             df = df[(df['year'] >= preferences['year']['start']) & (df['year'] <= preferences['year']['end'])]
@@ -305,12 +302,12 @@ def main():
         if 'acousticness' in preferences:
             if preferences['acousticness']:
                 df['sim'] = df.apply(
-                    lambda row: row['sim'] * 1.2 if row['acousticness'] >= 0.5 else row['sim'], 
+                    lambda row: row['sim'] * 1.5 if row['acousticness'] >= 0.5 else row['sim'], 
                     axis=1
                 )  
             else:
                 df['sim'] = df.apply(
-                    lambda row: row['sim'] * 1.2 if row['acousticness'] < 0.5 else row['sim'], 
+                    lambda row: row['sim'] * 1.5 if row['acousticness'] < 0.5 else row['sim'], 
                     axis=1
                 )
         

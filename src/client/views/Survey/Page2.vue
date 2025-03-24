@@ -236,7 +236,7 @@ export default {
                 const answers = this.getSelectedArtists();
                 console.log('Selected artists:', answers);
 
-                const response = await fetch('/api/post-artists-preferences', {
+                const response = await fetch('http://localhost:3000/api/post-artists-preferences', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

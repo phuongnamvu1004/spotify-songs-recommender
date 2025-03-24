@@ -1,0 +1,30 @@
+# Ignore node_modules (dependencies will be installed in the container)
+node_modules
+
+# Ignore Python virtual environment
+venv
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore pytest cache
+.pytest_cache/
+
+# Ignore Git repository files
+.git
+.gitignore
+
+# Ignore Docker-related files
+.dockerignore
+Dockerfile
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Ignore IDE-specific files
+.vscode
+.idea

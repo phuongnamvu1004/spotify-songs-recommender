@@ -7,8 +7,18 @@ const path = require("path");
 const apiRouter = require('./routes/api.routes');
 const authRouter = require('./routes/auth.routes');
 
+require('dotenv').config();
+
 // Initialize Redis client
-const redisClient = createClient();
+const redisClient = createClient(
+  {
+    socket: {
+      host: process.env.REDIS_HOST || "redis", // Use "redis" as the hostname
+      port: process.env.REDIS_PORT || 6379
+    }
+  }
+);
+
 redisClient.connect().catch(console.error);
 
 // Handle Redis connection errors

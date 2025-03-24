@@ -13,6 +13,8 @@ router.get("/auth-status", (req, res) => {
 });
 
 router.get("/get-playlists", requireToken, async (req, res) => {
+  console.log("Access Token:", req.session.access_token); // Log the token to ensure it's being set
+
   const response = await fetch("https://api.spotify.com/v1/me/playlists", {
     headers: {
       Authorization: `Bearer ${req.session.access_token}`,

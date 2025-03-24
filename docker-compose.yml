@@ -1,0 +1,16 @@
+version: '3'
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+  spotify-recommender:
+    build: .
+    ports:
+      - "3000:3000"
+      - "5173:5173"
+    env_file:
+      - .env
+    depends_on:
+      - redis
