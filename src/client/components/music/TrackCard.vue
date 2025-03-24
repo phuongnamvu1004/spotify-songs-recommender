@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-gray-800/70 rounded-lg p-3 flex flex-col transition-transform hover:-translate-y-1 hover:bg-gray-700/80"
+    class="mt-3 pt-3 border-t border-gray-700"
   >
     <img 
       :src="track.album && track.album.images && track.album.images[0]?.url || '/default-track.png'"
@@ -70,10 +70,38 @@ export default {
         .join(', ');
     },
     formattedDuration() {
-      if (!this.track.duration_ms) return '0:00';
-      const minutes = Math.floor(this.track.duration_ms / 60000);
-      const seconds = Math.floor((this.track.duration_ms % 60000) / 1000);
+      return this.formatDuration(this.track.duration_ms);
+    }
+  },
+  methods: {
+    // Define the formatting functions directly in the component
+    formatDuration(ms) {
+      if (!ms) return '0:00';
+      const minutes = Math.floor(ms / 60000);
+      const seconds = Math.floor((ms % 60000) / 1000);
       return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    },
+    
+    // Add other formatter functions if needed
+    formatArtists(artists) {
+      if (!artists || !Array.isArray(artists)) return 'Unknown Artist';
+      
+      return artists
+        .map(artist => artist.name || '')
+        .filter(name => name)
+        .join(', ');
+    },
+    
+    cleanArtistDisplay(artistString) {
+      if (!artistString) return 'Unknown Artist';
+
+      if (typeof artistString === 'string') {
+        return artistString
+          .replace(/\[|\]|'|"|\\|\//g, '')
+          .replace(/^\s+|\s+$/g, '');
+      }
+
+      return artistString;
     }
   }
 }

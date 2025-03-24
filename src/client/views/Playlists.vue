@@ -12,7 +12,7 @@
     </div>
     <div v-else-if="error" class="text-red-500 text-center p-4 bg-red-500/10 rounded-lg">{{ error }}</div>
 
-    <!-- Playlists Grid View - Không sử dụng PlaylistCard component -->
+    <!-- Playlists Grid View  -->
     <div v-if="!selectedPlaylist"
       class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
       <div v-for="playlist in playlists" :key="playlist?.id || index"
@@ -112,7 +112,7 @@
 <script>
 import ContentHeader from '../components/layout/ContentHeader.vue';
 import TrackCard from '../components/music/TrackCard.vue';
-import { formatDuration, formatArtists } from '../utils/formatters';
+import { formatDuration, formatArtists, formatPlaylistDuration } from '../utils/formatters';
 
 export default {
   components: {
@@ -166,41 +166,11 @@ export default {
       }
     },
 
-    formatPlaylistDuration(playlist) {
-      if (!playlist || !playlist.tracks) return '0 min';
-      
-      // Estimate based on average track length (3:30)
-      const estimatedMinutes = Math.round((playlist.tracks.total || 0) * 3.5);
-      if (estimatedMinutes < 60) {
-        return `${estimatedMinutes} min`;
-      }
-      const hours = Math.floor(estimatedMinutes / 60);
-      const minutes = estimatedMinutes % 60;
-      return `${hours} hr ${minutes} min`;
-    },
-
     // imported formatters
     formatDuration,
     formatArtists,
-
-    playPlaylist() {
-      // Implement play functionality here
-      console.log('Playing playlist:', this.selectedPlaylist.name);
-    },
-
-    sharePlaylist() {
-      // Implement share functionality here
-      console.log('Sharing playlist:', this.selectedPlaylist.name);
-    },
-
-    playTrack(track) {
-      console.log('Playing track:', track.name);
-    },
-
-    likeTrack(track) {
-      console.log('Liked track:', track.name);
-    },
-
+    formatPlaylistDuration,
+  
     goToSurvey() {
       try {
         this.$router.push('/Survey/Page1');
