@@ -13,6 +13,10 @@ services:
       - "5173:5173"
     env_file:
       - .env
+    environment:
+      REDIS_HOST: ${REDIS_HOST} # Pass Redis host from .env
+      REDIS_PASSWORD: ${REDIS_PASSWORD} # Pass Redis password from .env
+      REDIS_PORT: ${REDIS_PORT} # Pass Redis port from .env
     depends_on:
       - redis
       - db

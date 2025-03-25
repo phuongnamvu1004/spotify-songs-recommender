@@ -11,20 +11,18 @@ const authRouter = require('./routes/auth.routes');
 require('dotenv').config();
 
 // Initialize Redis client
-const redisClient = createClient(
-  {
-    socket: {
-      host: process.env.REDIS_HOST || "redis", // Use "redis" as the hostname
-      port: process.env.REDIS_PORT || 6379
-    }
-  }
-);
+const redisClient = createClient({
+  url: process.env.REDIS_URL, // Use full Redis URL
+});
 
-redisClient.connect().catch(console.error);
+
+redisClient.connect().catch((err) => {
+  console.error('Redis connection error:', err);
+});
 
 // Handle Redis connection errors
 redisClient.on('error', (err) => {
-  console.log('Redis Client Error', err);
+  console.error('Redis Client Error:', err);
 });
 
 // Initialize Redis store
