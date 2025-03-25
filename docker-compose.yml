@@ -5,6 +5,7 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+
   spotify-recommender:
     build: .
     ports:
@@ -14,3 +15,19 @@ services:
       - .env
     depends_on:
       - redis
+      - db
+
+  db:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: spotify_user
+      POSTGRES_PASSWORD: spotify_password
+      POSTGRES_DB: spotify_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

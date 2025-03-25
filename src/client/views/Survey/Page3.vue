@@ -124,7 +124,8 @@ export default {
                         },
                         body: JSON.stringify({
                             acousticness: this.selectedOption === 'yes'
-                        })
+                        }),
+                        credentials: "include"
                     });
 
                     if (!response.ok) {

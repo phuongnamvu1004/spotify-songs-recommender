@@ -511,7 +511,7 @@ export default {
    
     async fetchRecommendedSongs() {
       try {
-        let url = '/api/recommended-songs';
+        let url = 'http://localhost:3000/api/recommended-songs';
         if (this.userPreferences.artists.length > 0 || this.userPreferences.acousticness !== null) {
           const queryParams = new URLSearchParams();
 
@@ -544,7 +544,9 @@ export default {
 
     async fetchPlaylists() {
       try {
-        const response = await fetch('http://localhost:3000/api/get-playlists');
+        const response = await fetch('http://localhost:3000/api/get-playlists', {
+          credentials: 'include'
+        });
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }
@@ -563,7 +565,9 @@ export default {
       this.loading = true;
 
       try {
-        const response = await fetch(`http://localhost:3000/api/playlist-tracks/${playlist.id}`);
+        const response = await fetch(`http://localhost:3000/api/playlist-tracks/${playlist.id}`, {
+          credentials: "include"
+        });
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }

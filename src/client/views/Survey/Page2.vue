@@ -241,7 +241,8 @@ export default {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ artists: answers })
+                    body: JSON.stringify({ artists: answers }),
+                    credentials: 'include' // Include cookies with the request
                 });
 
                 console.log('Response status:', response.status);

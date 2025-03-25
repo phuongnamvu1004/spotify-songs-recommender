@@ -130,7 +130,9 @@ export default {
   },
   async mounted() {
     try {
-      const response = await fetch('http://localhost:3000/api/get-playlists')
+      const response = await fetch('http://localhost:3000/api/get-playlists', {
+        credentials: 'include'
+      })
       console.log(response)
       if (!response.ok) {
         throw new Error('Authentication required')
@@ -150,7 +152,9 @@ export default {
       this.loading = true;
 
       try {
-        const response = await fetch(`http://localhost:3000/api/playlist-tracks/${playlist.id}`);
+        const response = await fetch(`/api/playlist-tracks/${playlist.id}`, {
+          credentials: 'include'
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch tracks");
         }

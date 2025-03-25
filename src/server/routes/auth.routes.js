@@ -12,7 +12,6 @@ const redirect_uri = "http://localhost:3000/callback";
 
 // Middleware to check for token
 const requireToken = async (req, res, next) => {
-  console.log("Session content:", req.session);
   if (!req.session.access_token) {
     return res.status(401).json({ error: 'No access token. Please login first' });
   }
@@ -110,9 +109,7 @@ router.get("/callback", function (req, res) {
         req.session.refresh_token = body.refresh_token;
 
         // Redirect to Vue frontend playlists page
-        req.session.save(() => {
-          res.redirect('http://localhost:5173/#/playlists');
-        });
+        res.redirect('http://localhost:5173/#/playlists');
       } else {
         res.redirect('http://localhost:5173/#/error');
       }

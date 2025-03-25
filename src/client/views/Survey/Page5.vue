@@ -276,7 +276,8 @@ export default {
                             start: answers.tempoRange[0],
                             end: answers.tempoRange[1]
                         }
-                    })
+                    }),
+                    credentials: "include"
                 });
 
                 if (response.ok) {
