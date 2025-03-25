@@ -15,7 +15,6 @@ const redisClient = createClient({
   url: process.env.REDIS_URL, // Use full Redis URL
 });
 
-
 redisClient.connect().catch((err) => {
   console.error('Redis connection error:', err);
 });

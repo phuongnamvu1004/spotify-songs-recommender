@@ -63,10 +63,49 @@ export function cleanArtistDisplay(artistString) {
   return artistString;
 }
 
-export default {
-  formatDuration,
-  formatPlaylistDuration,
-  formatReleaseDate,
-  formatArtists,
-  cleanArtistDisplay,
-};
+export function formatSongToTrack(song) {
+  return {
+    id: song.id,
+    name: song.name,
+    artists: Array.isArray(song.artists)
+      ? song.artists.map((artist) =>
+          typeof artist === "string"
+            ? { name: cleanArtistDisplay(artist) }
+            : artist
+        )
+      : [{ name: cleanArtistDisplay(song.artists || "Unknown Artist") }],
+    album: {
+      name: song.album || "Unknown Album",
+      images: song.imgURL ? [{ url: song.imgURL }] : null,
+    },
+    duration_ms: song.duration_ms,
+    preview_url: song.preview_url,
+    popularity: song.popularity || 0,
+  };
+}
+
+export function formatArtistDuration(artist) {
+  const totalMs = artist.songs.reduce(
+    (sum, song) => sum + (song.duration_ms || 0),
+    0
+  );
+  const minutes = Math.floor(totalMs / 60000);
+
+  if (minutes < 60) {
+    return `${minutes} min`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMins = minutes % 60;
+  return `${hours} hr ${remainingMins} min`;
+}
+
+
+
+// export default {
+//   formatDuration,
+//   formatPlaylistDuration,
+//   formatReleaseDate,
+//   formatArtists,
+//   cleanArtistDisplay,
+// };
