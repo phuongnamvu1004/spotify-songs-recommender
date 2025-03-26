@@ -10,7 +10,6 @@ const authRouter = require('./routes/auth.routes');
 const postPrefRouter = require('./routes/postPref.routes');
 const recommendationRouter = require('./routes/recommendation.routes');
 
-
 require('dotenv').config();
 
 // Initialize Redis client
@@ -37,7 +36,7 @@ const app = express();
 
 // Enable CORS for requests from localhost:5173
 app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from this origin
+  origin: `${process.env.REDIRECT_URI}`, // Allow requests from this origin
   credentials: true // Allow cookies to be sent with requests
 }));
 

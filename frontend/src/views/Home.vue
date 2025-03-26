@@ -25,7 +25,7 @@
 
         <button v-else
           class="flex items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-blue-600 px-8 py-3 font-bold text-white hover:from-green-400 hover:to-blue-500 transition-all duration-300">
-          <a href="http://localhost:3000/login" class="font-bold text-white text-center">
+          <a :href="`${backendUrl}/login`" class="font-bold text-white text-center">
             Login with Spotify
           </a>
         </button>
@@ -40,13 +40,14 @@ export default {
   data() {
     return {
       isAuthenticated: false,
+      backendUrl: import.meta.env.VITE_BACKEND_URL, // Get it from Vite env
     };
   },
   methods: {
     async checkAuthStatus() {
       try {
-        const response = await fetch("http://localhost:3000/api/auth-status", {
-          credentials: "include"
+        const response = await fetch(`${this.backendUrl}/api/auth-status`, {
+          credentials: "include",
         });
         const data = await response.json();
         this.isAuthenticated = data.isAuthenticated;

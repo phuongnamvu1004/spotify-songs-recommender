@@ -241,6 +241,7 @@ export default {
         { label: "Adele", value: "F" },
         { label: "Other", value: "G" },
       ],
+      backendUrl: import.meta.env.VITE_BACKEND_URL, // Get it from Vite env
     };
   },
   computed: {
@@ -342,7 +343,7 @@ export default {
         console.log("Selected artists:", answers);
 
         const response = await fetch(
-          "http://localhost:3000/api/post-artists-preferences",
+          `${this.backendUrl}/api/post-artists-preferences`,
           {
             method: "POST",
             headers: {

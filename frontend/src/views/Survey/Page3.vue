@@ -183,6 +183,7 @@ export default {
       selectedOption: null,
       isLoading: false,
       error: null,
+      backendUrl: import.meta.env.VITE_BACKEND_URL, // Get it from Vite env
     };
   },
   methods: {
@@ -202,7 +203,7 @@ export default {
 
         try {
           const response = await fetch(
-            "http://localhost:3000/api/post-acousticness-preferences",
+            `${this.backendUrl}/api/post-acousticness-preferences`,
             {
               method: "POST",
               headers: {

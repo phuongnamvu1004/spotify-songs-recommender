@@ -35,7 +35,7 @@ router.get("/callback", function (req, res) {
   const state = req.query.state || null;
 
   if (state === null) {
-    res.redirect("http://localhost:5173/#/error");
+    res.redirect(`${process.env.FRONTEND_URL}/#/error`);
   } else {
     const authOptions = {
       url: "https://accounts.spotify.com/api/token",
@@ -59,9 +59,9 @@ router.get("/callback", function (req, res) {
         req.session.refresh_token = body.refresh_token;
 
         // Redirect to Vue frontend playlists page
-        res.redirect("http://localhost:5173/#/playlists");
+        res.redirect(`${process.env.REDIRECT_URI}/#/playlists`);
       } else {
-        res.redirect("http://localhost:5173/#/error");
+        res.redirect(`${process.env.REDIRECT_URI}/#/error`);
       }
     });
   }

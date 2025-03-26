@@ -503,6 +503,7 @@ export default {
         artists: [],
         acousticness: null,
       },
+      backendUrl: import.meta.env.VITE_BACKEND_URL, // Get it from Vite env
     };
   },
   async mounted() {
@@ -621,7 +622,7 @@ export default {
     async fetchRecommendedSongs() {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/recommended-songs",
+          `${this.backendUrl}/api/recommended-songs`,
           {
             credentials: "include",
           }
@@ -642,7 +643,7 @@ export default {
     async fetchPlaylists() {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/get-playlists",
+          `${this.backendUrl}/api/get-playlists`,
           {
             credentials: "include",
           }
@@ -666,7 +667,7 @@ export default {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/api/playlist-tracks/${playlist.id}`,
+          `${this.backendUrl}/api/playlist-tracks/${playlist.id}`,
           {
             credentials: "include",
           }

@@ -328,6 +328,7 @@ export default {
       isDragging: false,
       currentDragTarget: null,
       activeContainer: null,
+      backendUrl: import.meta.env.VITE_BACKEND_URL, // Get it from Vite env
     };
   },
   mounted() {
@@ -375,7 +376,7 @@ export default {
       };
 
       try {
-        const response = await fetch("http://localhost:3000/api/post-remaining-preferences", {
+        const response = await fetch(`${this.backendUrl}/api/post-remaining-preferences`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

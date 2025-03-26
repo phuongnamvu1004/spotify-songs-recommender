@@ -125,12 +125,13 @@ export default {
       tracks: [],
       selectedPlaylist: null,
       loading: true,
-      error: null
+      error: null,
+      backendUrl: import.meta.env.VITE_BACKEND_URL, // Get it from Vite env
     }
   },
   async mounted() {
     try {
-      const response = await fetch('http://localhost:3000/api/get-playlists', {
+      const response = await fetch(`${this.backendUrl}/api/get-playlists`, {
         credentials: 'include'
       })
       console.log(response)
@@ -152,7 +153,7 @@ export default {
       this.loading = true;
 
       try {
-        const response = await fetch(`/api/playlist-tracks/${playlist.id}`, {
+        const response = await fetch(`${this.backendUrl}/api/playlist-tracks/${playlist.id}`, {
           credentials: 'include'
         });
         if (!response.ok) {
