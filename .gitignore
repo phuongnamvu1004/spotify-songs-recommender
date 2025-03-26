@@ -5,18 +5,15 @@
 node_modules/
 
 # exclude spotify_data.csv (too large)
-src/server/db/spotify_data.csv
+backend/src/db/spotify_data.csv
 
 # environment variables
 .env
-.env.docker
+.env.docker.backend
+.env.docker.frontend
 
 # Python virtual environment
 venv/
-
-# Python cache
-src/server/algorithm/python_ML/__pycache__/
-src/server/algorithm/python_ML/tests/__pycache__
 
 # pytest cache
 .pytest_cache/

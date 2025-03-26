@@ -62,7 +62,7 @@ app.use("/api", userDataRouter);
 app.use("/api", postPrefRouter);
 app.use("/api", recommendationRouter);
 
-app.listen(3000, '0.0.0.0', () => {
+app.listen(process.env.BACKEND_PORT || 3000, '0.0.0.0', () => {
   console.log("App is listening on port 3000...");
 });
 
