@@ -71,6 +71,8 @@ async function importCsvToPostgres(csvFilePath) {
 }
 
 // Execute immediately without setTimeout
-importCsvToPostgres("./spotify_data.csv").catch(console.error);
+const path = require("path");
+const csvFilePath = path.resolve(__dirname, "spotify_data.csv");
+importCsvToPostgres(csvFilePath).catch(console.error);
 
 module.exports = { sequelize };

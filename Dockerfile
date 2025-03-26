@@ -28,8 +28,9 @@ RUN . venv/bin/activate && \
 # Copy application code
 COPY . .
 
-# Set environment variables
-ENV NODE_ENV=production
+# Copy .env.docker file and set environment variables
+COPY .env.docker .env
+ENV $(cat .env | xargs)
 
 # Expose the port your app runs on
 EXPOSE 3000 5173

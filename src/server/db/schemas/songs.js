@@ -2,11 +2,15 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 require('dotenv').config();
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
+const sequelize = new Sequelize(process.env.DB_URL, {
   dialect: "postgres",
-  port: process.env.DB_PORT,
   logging: false, // Disable logging SQL queries
+  dialectOptions: {
+    ssl: {
+      require: true, // Enforce SSL
+      rejectUnauthorized: false, // Allow self-signed certificates (Render uses trusted certificates, so this is safe)
+    },
+  },
 });
 
 // Define Song Model
@@ -84,14 +88,5 @@ const Song = sequelize.define(
     ],
   }
 );
-
-// // Force sync to recreate the table
-// sequelize.sync({ force: true })
-//   .then(() => {
-//     console.log("Table created successfully!");
-//   })
-//   .catch((error) => {
-//     console.error("Error creating table:", error);
-//   });
 
 module.exports = { Song, sequelize };

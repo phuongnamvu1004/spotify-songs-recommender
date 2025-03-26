@@ -1,36 +1,9 @@
 version: '3'
 services:
-  redis:
-    image: redis:alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
-
   spotify-recommender:
     build: .
     ports:
       - "3000:3000"
       - "5173:5173"
-    env_file:
-      - .env
-    environment:
-      REDIS_URL: ${REDIS_URL} # Pass Redis host from .env
-      REDIS_PORT: ${REDIS_PORT} # Pass Redis port from .env
-    depends_on:
-      - redis
-      - db
 
-  db:
-    image: postgres:14
-    container_name: postgres
-    environment:
-      POSTGRES_USER: spotify_user
-      POSTGRES_PASSWORD: spotify_password
-      POSTGRES_DB: spotify_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
-volumes:
-  postgres_data:

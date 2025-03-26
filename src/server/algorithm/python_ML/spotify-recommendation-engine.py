@@ -7,7 +7,7 @@ import sys
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import MinMaxScaler
 
-from fetch_data import sql_query
+from fetch_data import fetch_all_data_in_batches
 import requests
 
 # Get the access token from command line arguments
@@ -16,7 +16,8 @@ preferences = sys.argv[2]
 
 def main():
     ### 1. Data Exploration/Preparation
-    spotify_df = sql_query([
+    # Fetch all rows from the "songs" table
+    spotify_df = fetch_all_data_in_batches([
         "acousticness", 
         "artists", 
         "danceability", 
@@ -30,12 +31,12 @@ def main():
         "mode", 
         "name", 
         "popularity", 
-        "release_date",  # Add release_date to the query
+        "release_date", 
         "speechiness", 
         "tempo", 
         "valence", 
         "year"
-    ], "songs")
+    ], "songs", batch_size=5000)
 
     spotify_df['artists_upd_v1'] = spotify_df['artists'].apply(lambda x: re.findall(r"'([^']*)'", x))
 

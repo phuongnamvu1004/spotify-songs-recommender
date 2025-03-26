@@ -7,8 +7,9 @@ node_modules/
 # exclude spotify_data.csv (too large)
 src/server/db/spotify_data.csv
 
-# SpotifyAPI credentials
+# environment variables
 .env
+.env.docker
 
 # Python virtual environment
 venv/

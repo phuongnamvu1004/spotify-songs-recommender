@@ -5,8 +5,11 @@ const RedisStore = require('connect-redis').default;
 const cors = require('cors'); // Import CORS middleware
 const path = require("path");
 
-const apiRouter = require('./routes/api.routes');
+const userDataRouter = require('./routes/userData.routes');
 const authRouter = require('./routes/auth.routes');
+const postPrefRouter = require('./routes/postPref.routes');
+const recommendationRouter = require('./routes/recommendation.routes');
+
 
 require('dotenv').config();
 
@@ -54,8 +57,10 @@ app.use(session({
   }
 }));
 
-app.use("/api", apiRouter);
 app.use("/", authRouter);
+app.use("/api", userDataRouter);
+app.use("/api", postPrefRouter);
+app.use("/api", recommendationRouter);
 
 app.listen(3000, () => {
   console.log("App is listening on port 3000...");
