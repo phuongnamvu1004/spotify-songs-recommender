@@ -17,10 +17,6 @@ RUN pip3 install --upgrade pip --break-system-packages && \
 # Copy backend code
 COPY . .
 
-# OPTIONAL: Comment out if deploying to Render
-COPY .env.docker.frontend .env
-ENV $(cat .env | xargs)
-
 EXPOSE 3000
 
 CMD ["npm", "start"]
