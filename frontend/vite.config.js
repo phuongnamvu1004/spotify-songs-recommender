@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
           ws: true,
         },
       },
+      allowedHosts: ['.onrender.com'], // ✅ allow Render public domain
     },
-  }
-})
+  };
+});
