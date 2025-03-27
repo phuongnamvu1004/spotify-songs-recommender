@@ -631,7 +631,7 @@ export default {
           throw new Error(`API error: ${response.status}`);
         }
         const data = await response.json();
-        this.recommendedSongs = data;
+        this.recommendedSongs = data.recommendations || [];
 
         console.log("Recommended songs loaded:", this.recommendedSongs.length);
       } catch (error) {

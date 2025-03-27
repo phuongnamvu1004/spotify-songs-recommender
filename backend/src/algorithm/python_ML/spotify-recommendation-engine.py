@@ -9,6 +9,10 @@ from sklearn.preprocessing import MinMaxScaler
 
 from fetch_data import fetch_all_data_in_batches
 import requests
+from dotenv import load_dotenv
+import os
+# Load environment variables from a .env file
+load_dotenv()
 
 # Get the access token from command line arguments
 ACCESS_TOKEN = sys.argv[1]
@@ -349,7 +353,13 @@ def main():
 
     top50 = generate_playlist_recos(spotify_df, complete_feature_set_playlist_vector_all, complete_feature_set_nonplaylist_all)
 
-    print(top50.to_json(orient='records'))
+    BACKEND_URL = os.getenv("BACKEND_URL")
+    response = requests.post(
+        f"{BACKEND_URL}/api/recommended-songs/callback", 
+        json={"recommendedSongs": top50.to_dict(orient="records")}
+    )
+
+    print("Python script posted results, server responded:", response.text)
     
 if __name__ == "__main__":
     main()

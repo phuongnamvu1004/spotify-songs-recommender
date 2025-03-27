@@ -1,7 +1,6 @@
 from typing import List
 import pandas as pd
 from sqlalchemy import create_engine
-from sqlalchemy.pool import QueuePool
 from dotenv import load_dotenv
 import sys
 import os
@@ -54,18 +53,18 @@ try:
         all_data = pd.DataFrame()
 
         while True:
-            # Fetch a batch of data
+            print(f"[INFO] Fetching batch starting at offset {offset}...", file=sys.stderr)
+
             batch = sql_query(select, table, offset=offset, limit=batch_size)
-            
-            # Break the loop if no more rows are returned
+
             if batch.empty:
+                print("[INFO] No more rows to fetch. Done.", file=sys.stderr)
                 break
-            
-            # Append the batch to the combined DataFrame
+
             all_data = pd.concat([all_data, batch], ignore_index=True)
-            
-            # Increment the offset for the next batch
             offset += batch_size
+
+            print(f"[INFO] Total rows fetched so far: {len(all_data)}", file=sys.stderr)
 
         return all_data
 
