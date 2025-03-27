@@ -39,6 +39,23 @@ const app = express();
 //   credentials: true // Allow cookies to be sent with requests
 // }));
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://songs-recommender-sptf-frontend.onrender.com'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+
 // Simplify middleware for testing
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
