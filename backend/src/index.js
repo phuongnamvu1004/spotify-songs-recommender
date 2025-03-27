@@ -34,10 +34,10 @@ const redisStore = new RedisStore({
 
 const app = express();
 
-app.use(cors({
-  origin: `${process.env.FRONTEND_URL}`, // Allow requests from this origin
-  credentials: true // Allow cookies to be sent with requests
-}));
+// app.use(cors({
+//   origin: `${process.env.FRONTEND_URL}`, // Allow requests from this origin
+//   credentials: true // Allow cookies to be sent with requests
+// }));
 
 // Simplify middleware for testing
 app.use(express.json());
