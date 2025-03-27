@@ -70,8 +70,8 @@ router.get("/recommended-songs", requireToken, async (req, res) => {
 
         if (startIdx !== -1 && endIdx !== -1) {
           const rawJson = scriptOutput.slice(startIdx + startTag.length, endIdx).trim();
-          const result = JSON.parse(rawJson);
-          const trackIds = result.map((track) => track.id).join(",");
+          result = JSON.parse(rawJson);
+          trackIds = result.map((track) => track.id).join(",");
           console.log("🎶 Track IDs:", trackIds);
         } else {
           throw new Error("Could not find JSON output markers in Python output");
