@@ -55,4 +55,9 @@ router.get("/playlist-tracks/:playlistId", requireToken, async (req, res) => {
   }
 });
 
+router.get("/session-dump", (req, res) => {
+  console.log("SESSION:", req.session);
+  res.json(req.session);
+});
+
 module.exports = router;

@@ -7,12 +7,8 @@ import sys
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import MinMaxScaler
 
-from fetch_data import fetch_all_data_in_batches
+from fetch_data import sql_query
 import requests
-from dotenv import load_dotenv
-import os
-# Load environment variables from a .env file
-load_dotenv()
 
 # Get the access token from command line arguments
 ACCESS_TOKEN = sys.argv[1]
@@ -21,7 +17,7 @@ preferences = sys.argv[2]
 def main():
     ### 1. Data Exploration/Preparation
     # Fetch all rows from the "songs" table
-    spotify_df = fetch_all_data_in_batches([
+    spotify_df = sql_query([
         "acousticness", 
         "artists", 
         "danceability", 
@@ -35,12 +31,12 @@ def main():
         "mode", 
         "name", 
         "popularity", 
-        "release_date", 
+        "release_date",  # Add release_date to the query
         "speechiness", 
         "tempo", 
         "valence", 
         "year"
-    ], "songs", batch_size=5000)
+    ], "songs", 10000)
 
     spotify_df['artists_upd_v1'] = spotify_df['artists'].apply(lambda x: re.findall(r"'([^']*)'", x))
 
@@ -353,13 +349,7 @@ def main():
 
     top50 = generate_playlist_recos(spotify_df, complete_feature_set_playlist_vector_all, complete_feature_set_nonplaylist_all)
 
-    BACKEND_URL = os.getenv("BACKEND_URL")
-    response = requests.post(
-        f"{BACKEND_URL}/api/recommended-songs/callback", 
-        json={"recommendedSongs": top50.to_dict(orient="records")}
-    )
-
-    print("Python script posted results, server responded:", response.text)
+    print(top50.to_json(orient='records'))
     
 if __name__ == "__main__":
     main()

@@ -11,6 +11,7 @@ const {
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
+const frontend_url = process.env.FRONTEND_URL
 
 // Auth-related routes
 router.get("/login", function (_req, res) {
@@ -35,7 +36,7 @@ router.get("/callback", function (req, res) {
   const state = req.query.state || null;
 
   if (state === null) {
-    res.redirect(`${process.env.FRONTEND_URL}/#/error`);
+    res.redirect(`${frontend_url}/#/error`);
   } else {
     const authOptions = {
       url: "https://accounts.spotify.com/api/token",
@@ -58,10 +59,11 @@ router.get("/callback", function (req, res) {
         req.session.access_token = body.access_token;
         req.session.refresh_token = body.refresh_token;
 
+        console.log("[DEBUG] Redirecting to:", `${frontend_url}/#/playlists`);
         // Redirect to Vue frontend playlists page
-        res.redirect(`${process.env.FRONTEND_URL}/#/playlists`);
+        res.redirect(`${frontend_url}/#/playlists`);
       } else {
-        res.redirect(`${process.env.FRONTEND_URL}/#/error`);
+        res.redirect(`${frontend_url}/#/error`);
       }
     });
   }

@@ -34,27 +34,10 @@ const redisStore = new RedisStore({
 
 const app = express();
 
-// app.use(cors({
-//   origin: `${process.env.FRONTEND_URL}`, // Allow requests from this origin
-//   credentials: true // Allow cookies to be sent with requests
-// }));
-
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://songs-recommender-sptf-frontend.onrender.com'
-];
-
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
+  origin: `${process.env.FRONTEND_URL}`, // Allow requests from this origin
+  credentials: true // Allow cookies to be sent with requests
 }));
-
 
 // Simplify middleware for testing
 app.use(express.json());

@@ -4,106 +4,94 @@ const path = require("path");
 const router = express.Router();
 const { requireToken } = require("./auth.routes");
 
-// Route: Trigger recommendations
-router.post("/recommended-songs", requireToken, (req, res) => {
+router.get("/recommended-songs", requireToken, async (req, res) => {
   try {
+    // Initialize user data if needed
     req.session.userData = req.session.userData || {};
-
+    
+    // Convert preferences to string for comparison
     const currentPrefsString = JSON.stringify(req.session.userData?.preferences || {});
     const prevPrefsString = JSON.stringify(req.session.userData?.prevPreferences || {});
-
+    
+    // Check if we already have recommendations for current preferences
     if (
       prevPrefsString === currentPrefsString &&
       req.session.userData?.recommendedSongs
     ) {
-      console.log("✅ Using cached recommendations.");
-      req.session.userData.loadingRecommendations = false;
-      return res.status(200).json({ cached: true });
+      console.log('Using cached recommended songs');
+      return res.json(req.session.userData.recommendedSongs);
     }
-
-    console.log("🔄 Preferences changed, generating new recommendations...");
+    
+    console.log('Generating new recommendations...');
+    
+    // Store current preferences as previous preferences
     req.session.userData.prevPreferences = JSON.parse(currentPrefsString);
-    req.session.userData.loadingRecommendations = true;
+    
+    const pythonProcess = spawn("python3", [
+      path.join(
+        __dirname,
+        "../algorithm/python_ML/spotify-recommendation-engine.py"
+      ),
+      req.session.access_token,
+      req.session.userData?.preferences
+        ? JSON.stringify(req.session.userData.preferences)
+        : "{}",
+    ]);
 
-    req.session.save((err) => {
-      if (err) {
-        console.error("❌ Failed to save session before Python spawn:", err);
-        return res.status(500).json({ error: "Could not save loading state" });
+    let scriptOutput = "";
+
+    pythonProcess.stdout.on("data", (data) => {
+      scriptOutput += data.toString();
+    });
+
+    pythonProcess.stderr.on("data", (data) => {
+      console.error(`stderr: ${data}`);
+    });
+
+    pythonProcess.on("close", async (code) => {
+      if (code !== 0) {
+        return res.status(500).json({ error: "Python script failed" });
       }
 
-      const scriptPath = path.join(__dirname, "../algorithm/python_ML/spotify-recommendation-engine.py");
+      try {
+        const result = JSON.parse(scriptOutput);
+        const trackIds = result.map((track) => track.id).join(",");
+        const response = await fetch(
+          `https://api.spotify.com/v1/tracks?ids=${trackIds}`,
+          {
+            headers: {
+              Authorization: `Bearer ${req.session.access_token}`,
+            },
+          }
+        );
+        const data = await response.json();
 
-      console.log("🚀 Spawning Python process:", scriptPath);
-      const pythonProcess = spawn("python3", [
-        scriptPath,
-        req.session.access_token,
-        currentPrefsString,
-      ]);
+        const updatedTracks = result.map((track, index) => ({
+          ...track,
+          imgURL: data.tracks[index].album.images[0]?.url,
+        }));
 
-      pythonProcess.stdout.on("data", (data) => {
-        console.log("🐍 Python stdout:", data.toString());
-      });
-
-      pythonProcess.stderr.on("data", (data) => {
-        console.error("⚠️ Python stderr:", data.toString());
-      });
-
-      pythonProcess.on("close", (code) => {
-        if (code !== 0) {
-          console.error("❌ Python process exited with code", code);
-        } else {
-          console.log("✅ Python script completed successfully");
-        }
-      });
-
-      res.status(202).json({ message: "Generating recommendations..." });
-    });
-  } catch (err) {
-    console.error("❌ Trigger error:", err);
-    res.status(500).json({ error: "Failed to start recommendation engine" });
-  }
-});
-
-// Route: Callback from Python
-router.post("/recommended-songs/callback", requireToken, (req, res) => {
-  try {
-    const { recommendedSongs } = req.body;
-
-    console.log("📥 Callback received from Python. Songs:", Array.isArray(recommendedSongs) ? recommendedSongs.length : "invalid format");
-
-    if (!recommendedSongs || !Array.isArray(recommendedSongs)) {
-      return res.status(400).json({ error: "Invalid payload from Python" });
-    }
-
-    req.session.userData = req.session.userData || {};
-    req.session.userData.recommendedSongs = recommendedSongs;
-    req.session.userData.loadingRecommendations = false;
-
-    req.session.save((err) => {
-      if (err) {
-        console.error("❌ Session save failed in callback:", err);
-        return res.status(500).json({ error: "Could not save recommendations" });
+        // Save recommendations to session
+        req.session.userData.recommendedSongs = updatedTracks;
+        
+        // Save session first, then send response
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ error: "Failed to save session data" });
+          }
+          // Send response only after session is saved
+          res.json(updatedTracks);
+        });
+      } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Failed to process recommended songs" });
       }
-      console.log("✅ Recommendations saved successfully into session.");
-      res.status(200).json({ success: true });
     });
-  } catch (err) {
-    console.error("❌ Callback error:", err);
-    res.status(500).json({ error: "Failed to process callback" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Failed to process recommended songs" });
   }
-});
-
-// Route: Frontend fetches recommendations
-router.get("/recommended-songs", requireToken, (req, res) => {
-  req.session.userData = req.session.userData || {};
-  const { recommendedSongs, loadingRecommendations = false } = req.session.userData;
-
-  console.log(`📤 GET /recommended-songs → loading: ${loadingRecommendations}, count: ${recommendedSongs?.length || 0}`);
-
-  res.status(200).json({
-    loading: loadingRecommendations,
-    recommendations: recommendedSongs || null,
-  });
 });
 
 module.exports = router;
