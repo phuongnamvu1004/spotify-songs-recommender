@@ -60,11 +60,26 @@ router.get("/recommended-songs", requireToken, async (req, res) => {
       }
 
       try {
-        console.log("📦 Parsing Python output...");
-        console.log("📦 Python Output:", scriptOutput);
-        const result = JSON.parse(scriptOutput.trim());
-        const trackIds = result.map((track) => track.id).join(",");
-        console.log("🎶 Track IDs:", trackIds);
+        const startTag = "[[JSON_OUTPUT_START]]";
+        const endTag = "[[JSON_OUTPUT_END]]";
+
+        const startIdx = scriptOutput.indexOf(startTag);
+        const endIdx = scriptOutput.indexOf(endTag);
+
+        if (startIdx !== -1 && endIdx !== -1) {
+          const rawJson = scriptOutput.slice(startIdx + startTag.length, endIdx).trim();
+          const result = JSON.parse(rawJson);
+          const trackIds = result.map((track) => track.id).join(",");
+          console.log("🎶 Track IDs:", trackIds);
+        } else {
+          throw new Error("Could not find JSON output markers in Python output");
+        }
+
+        // console.log("📦 Parsing Python output...");
+        // console.log("📦 Python Output:", scriptOutput);
+        // const result = JSON.parse(scriptOutput.trim());
+        // const trackIds = result.map((track) => track.id).join(",");
+        // console.log("🎶 Track IDs:", trackIds);
 
         const response = await fetch(
           `https://api.spotify.com/v1/tracks?ids=${trackIds}`,
