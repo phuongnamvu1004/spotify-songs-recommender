@@ -59,20 +59,20 @@ app.use(cors({
 // Simplify middleware for testing
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
-app.set('trust proxy', 1);
+app.set('trust proxy', 1); // Required on Render
+
 app.use(session({
   store: redisStore,
   secret: 'spotify-recommendation-secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 3600000
   }
 }));
-
 
 app.use("/", authRouter);
 app.use("/api", userDataRouter);
