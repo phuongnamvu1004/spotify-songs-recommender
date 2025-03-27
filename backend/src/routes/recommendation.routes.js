@@ -6,56 +6,65 @@ const { requireToken } = require("./auth.routes");
 
 router.get("/recommended-songs", requireToken, async (req, res) => {
   try {
-    // Initialize user data if needed
+    console.log("🚀 [GET /recommended-songs] Route triggered");
+    console.log("🧠 Access Token:", req.session.access_token);
+    console.log("🎛️  Preferences:", req.session.userData?.preferences);
+    console.log("📦 Previous Preferences:", req.session.userData?.prevPreferences);
+
     req.session.userData = req.session.userData || {};
     
-    // Convert preferences to string for comparison
     const currentPrefsString = JSON.stringify(req.session.userData?.preferences || {});
     const prevPrefsString = JSON.stringify(req.session.userData?.prevPreferences || {});
+
+    console.log("🔄 Comparing preferences...");
     
-    // Check if we already have recommendations for current preferences
     if (
       prevPrefsString === currentPrefsString &&
       req.session.userData?.recommendedSongs
     ) {
-      console.log('Using cached recommended songs');
+      console.log("✅ Using cached recommended songs");
       return res.json(req.session.userData.recommendedSongs);
     }
-    
-    console.log('Generating new recommendations...');
-    
-    // Store current preferences as previous preferences
+
+    console.log("🔁 Preferences changed — generating new recommendations");
+
     req.session.userData.prevPreferences = JSON.parse(currentPrefsString);
-    
+
+    const scriptPath = path.join(
+      __dirname,
+      "../algorithm/python_ML/spotify-recommendation-engine.py"
+    );
+
+    console.log("🐍 Spawning Python script:", scriptPath);
     const pythonProcess = spawn("python3", [
-      path.join(
-        __dirname,
-        "../algorithm/python_ML/spotify-recommendation-engine.py"
-      ),
+      scriptPath,
       req.session.access_token,
-      req.session.userData?.preferences
-        ? JSON.stringify(req.session.userData.preferences)
-        : "{}",
+      currentPrefsString,
     ]);
 
     let scriptOutput = "";
 
     pythonProcess.stdout.on("data", (data) => {
+      console.log("📥 Python stdout chunk received");
       scriptOutput += data.toString();
     });
 
     pythonProcess.stderr.on("data", (data) => {
-      console.error(`stderr: ${data}`);
+      console.error("⚠️ Python stderr:", data.toString());
     });
 
     pythonProcess.on("close", async (code) => {
+      console.log("🚪 Python process closed with code:", code);
       if (code !== 0) {
         return res.status(500).json({ error: "Python script failed" });
       }
 
       try {
+        console.log("📦 Parsing Python output...");
         const result = JSON.parse(scriptOutput);
         const trackIds = result.map((track) => track.id).join(",");
+        console.log("🎶 Track IDs:", trackIds);
+
         const response = await fetch(
           `https://api.spotify.com/v1/tracks?ids=${trackIds}`,
           {
@@ -71,25 +80,25 @@ router.get("/recommended-songs", requireToken, async (req, res) => {
           imgURL: data.tracks[index].album.images[0]?.url,
         }));
 
-        // Save recommendations to session
+        console.log("✅ Tracks enriched with images");
+
         req.session.userData.recommendedSongs = updatedTracks;
-        
-        // Save session first, then send response
+
         req.session.save((err) => {
           if (err) {
-            console.error("Session save error:", err);
+            console.error("❌ Session save error:", err);
             return res.status(500).json({ error: "Failed to save session data" });
           }
-          // Send response only after session is saved
+          console.log("📦 Session saved — sending recommendations to frontend");
           res.json(updatedTracks);
         });
       } catch (error) {
-        console.error("Error:", error);
+        console.error("❌ Error processing Python results:", error);
         res.status(500).json({ error: "Failed to process recommended songs" });
       }
     });
   } catch (error) {
-    console.error("Error:", error);
+    console.error("❌ General error in /recommended-songs:", error);
     res.status(500).json({ error: "Failed to process recommended songs" });
   }
 });
