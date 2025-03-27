@@ -61,6 +61,7 @@ router.get("/recommended-songs", requireToken, async (req, res) => {
 
       try {
         console.log("📦 Parsing Python output...");
+        console.log("📦 Python Output:", scriptOutput);
         const result = JSON.parse(scriptOutput);
         const trackIds = result.map((track) => track.id).join(",");
         console.log("🎶 Track IDs:", trackIds);
