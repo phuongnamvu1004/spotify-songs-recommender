@@ -64,13 +64,14 @@ app.use(session({
   secret: 'spotify-recommendation-secret',
   resave: false,
   saveUninitialized: false,
-  cookie: { 
-    secure: false, // Set to false for local development (Docker)
+  cookie: {
+    secure: true,
     httpOnly: true,
-    sameSite: 'lax', // Ensure cookies are sent with cross-origin requests
-    maxAge: 3600000 // 1 hour
+    sameSite: 'none',
+    maxAge: 3600000
   }
 }));
+
 
 app.use("/", authRouter);
 app.use("/api", userDataRouter);
