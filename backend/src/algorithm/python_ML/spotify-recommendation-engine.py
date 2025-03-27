@@ -168,8 +168,8 @@ def main():
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Error fetching playlists: {response.status_code}")
-            print(f"Response text: {response.text}")
+            log_debug(f"Error fetching playlists: {response.status_code}")
+            log_debug(f"Response text: {response.text}")
             response.raise_for_status()
 
     user_playlists = fetch_user_playlists()
@@ -186,8 +186,8 @@ def main():
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Error fetching playlist tracks: {response.status_code}")
-            print(f"Response text: {response.text}")
+            log_debug(f"Error fetching playlist tracks: {response.status_code}")
+            log_debug(f"Response text: {response.text}")
             response.raise_for_status()
         
     def create_necessary_outputs(playlist_name, id_dic, df):
