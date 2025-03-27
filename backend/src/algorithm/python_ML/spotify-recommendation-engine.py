@@ -43,7 +43,7 @@ def main():
         "tempo", 
         "valence", 
         "year"
-    ], "songs", 30000)
+    ], "songs")
 
     log_debug(f"✅ Retrieved {len(spotify_df)} songs from DB")
 
@@ -375,8 +375,6 @@ def main():
     print("[[JSON_OUTPUT_START]]")
     print(top50.to_json(orient="records"))
     print("[[JSON_OUTPUT_END]]")
-
-
     
 if __name__ == "__main__":
     main()
