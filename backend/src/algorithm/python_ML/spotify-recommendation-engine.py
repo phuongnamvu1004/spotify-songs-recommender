@@ -371,7 +371,7 @@ def main():
     
     log_debug(f"✅ Generated top {len(top50)} recommended songs")
 
-    print(json.dumps(top50))
+    print(top50.to_json(orient="records"))
 
     
 if __name__ == "__main__":
