@@ -59,6 +59,7 @@ app.use(cors({
 // Simplify middleware for testing
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
+app.set('trust proxy', 1);
 app.use(session({
   store: redisStore,
   secret: 'spotify-recommendation-secret',
