@@ -14,9 +14,16 @@ import requests
 ACCESS_TOKEN = sys.argv[1]
 preferences = sys.argv[2]
 
+def log_debug(message):
+    sys.stderr.write(f"[PYTHON DEBUG] {message}\n")
+    sys.stderr.flush()
+
+
 def main():
     ### 1. Data Exploration/Preparation
     # Fetch all rows from the "songs" table
+    log_debug("🔍 Fetching songs from database...")
+
     spotify_df = sql_query([
         "acousticness", 
         "artists", 
@@ -36,8 +43,12 @@ def main():
         "tempo", 
         "valence", 
         "year"
-    ], "songs", 10000)
+    ], "songs", 30000)
 
+    log_debug(f"✅ Retrieved {len(spotify_df)} songs from DB")
+
+    log_debug("🎨 Preprocessing artist columns...")
+    
     spotify_df['artists_upd_v1'] = spotify_df['artists'].apply(lambda x: re.findall(r"'([^']*)'", x))
 
     # print(spotify_df['artists'].values[0])
@@ -135,8 +146,13 @@ def main():
         
         return final
 
+    log_debug("⚙️ Creating feature set...")
+    
     complete_feature_set = create_feature_set(spotify_df, float_cols=float_cols)
     # print(complete_feature_set.head())
+    
+    log_debug(f"✅ Feature set created: shape {complete_feature_set.shape}")
+
 
     ### 3. Fetching user data from SpotifyAPI
 
@@ -347,7 +363,13 @@ def main():
         
         return non_playlist_df_top_50
 
+    log_debug("✅ Playlist vector generated")
+
+    log_debug("🧠 Generating recommendations...")
+    
     top50 = generate_playlist_recos(spotify_df, complete_feature_set_playlist_vector_all, complete_feature_set_nonplaylist_all)
+    
+    log_debug(f"✅ Generated top {len(top50)} recommended songs")
 
     print(top50.to_json(orient='records'))
     
