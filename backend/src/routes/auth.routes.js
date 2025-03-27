@@ -59,9 +59,9 @@ router.get("/callback", function (req, res) {
         req.session.refresh_token = body.refresh_token;
 
         // Redirect to Vue frontend playlists page
-        res.redirect(`${process.env.REDIRECT_URI}/#/playlists`);
+        res.redirect(`${process.env.FRONTEND_URL}/#/playlists`);
       } else {
-        res.redirect(`${process.env.REDIRECT_URI}/#/error`);
+        res.redirect(`${process.env.FRONTEND_URL}/#/error`);
       }
     });
   }

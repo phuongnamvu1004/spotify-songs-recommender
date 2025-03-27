@@ -34,9 +34,8 @@ const redisStore = new RedisStore({
 
 const app = express();
 
-// Enable CORS for requests from localhost:5173
 app.use(cors({
-  origin: `${process.env.REDIRECT_URI}`, // Allow requests from this origin
+  origin: `${process.env.FRONTEND_URL}`, // Allow requests from this origin
   credentials: true // Allow cookies to be sent with requests
 }));
 
