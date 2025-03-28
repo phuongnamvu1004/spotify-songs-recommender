@@ -43,7 +43,7 @@ def main():
         "tempo", 
         "valence", 
         "year"
-    ], "songs", 80000)
+    ], "songs", 65000)
 
     log_debug(f"✅ Retrieved {len(spotify_df)} songs from DB")
 
