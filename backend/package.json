@@ -1,12 +1,13 @@
 {
   "name": "spotify-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest"
   },
+  "type": "module",
   "dependencies": {
     "concurrently": "^8.2.2",
     "connect-redis": "^7.1.0",

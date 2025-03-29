@@ -1,7 +1,9 @@
+import { refreshAccessToken } from "../lib/utils.js";
+
 /**
  * Middleware to check for a valid access token
  */
-const requireToken = async (req, res, next) => {
+export const requireToken = async (req, res, next) => {
   if (!req.session.access_token) {
     return res.status(401).json({ error: "No access token. Please login first" });
   }
