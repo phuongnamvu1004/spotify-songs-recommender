@@ -5,10 +5,10 @@ const RedisStore = require('connect-redis').default;
 const cors = require('cors'); // Import CORS middleware
 const path = require("path");
 
-const userDataRouter = require('./routes/userData.routes');
-const authRouter = require('./routes/auth.routes');
-const postPrefRouter = require('./routes/postPref.routes');
-const recommendationRouter = require('./routes/recommendation.routes');
+const userDataRouter = require('./routes/userData.routes.js');
+const authRouter = require('./routes/auth.routes.js');
+const postPrefRouter = require('./routes/postPref.routes.js');
+const recommendationRouter = require('./routes/recommendation.routes.js');
 
 require('dotenv').config();
 
