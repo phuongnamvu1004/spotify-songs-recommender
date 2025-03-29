@@ -8,12 +8,13 @@ node_modules/
 backend/src/db/spotify_data.csv
 
 # environment variables
-.env
-.env.docker.backend
-.env.docker.frontend
+.env*
 
 # Python virtual environment
 venv/
+
+# pycache
+__pycache__
 
 # pytest cache
 .pytest_cache/

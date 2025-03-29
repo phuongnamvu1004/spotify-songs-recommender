@@ -38,6 +38,7 @@
 export default {
   name: "Home",
   data() {
+    console.log("[VITE DEBUG] VITE_BACKEND_URL:", import.meta.env.VITE_BACKEND_URL);
     return {
       isAuthenticated: false,
       backendUrl: import.meta.env.VITE_BACKEND_URL, // Get it from Vite env
