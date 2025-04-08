@@ -23,6 +23,8 @@ export const getRecommendations = async (req, res) => {
       accessToken,
     });
 
+    console.log("Response data type:", typeof response.data);
+
     res.json(response.data);
   } catch (error) {
     console.error("Error fetching recommendations:", error.message);
