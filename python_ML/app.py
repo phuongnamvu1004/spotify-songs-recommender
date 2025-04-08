@@ -31,9 +31,15 @@ async def root():
 
 @app.post("/recommend")
 async def recommend(request: Request):
+    print("📥 /recommend called")
     body = await request.json()
+    print("🧠 Received body:", body)
     access_token = body.get("accessToken")
     preferences = body.get("preferences")
 
-    result = recommender(access_token, preferences)
-    return json.loads(result)
+    try:
+        result = recommender(access_token, preferences)
+        return json.loads(result)
+    except Exception as e:
+        print("❌ Error in recommendation:", str(e))
+        return {"error": "Recommendation engine failed", "details": str(e)}
