@@ -30,6 +30,8 @@ export const getRecommendations = async (req, res) => {
       return res.status(401).json({error: "User not authenticated."});
     }
 
+    console.log("🔍 Fetching recommendations from ML service...", ml_service_url);
+
     const responsePython = await axios.post(`${ml_service_url}/recommend`, {
       preferences, accessToken,
     });
