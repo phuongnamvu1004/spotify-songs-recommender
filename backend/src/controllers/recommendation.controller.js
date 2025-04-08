@@ -55,7 +55,20 @@ export const getRecommendations = async (req, res) => {
 
     res.json(updatedTracks);
   } catch (error) {
-    console.error("Error fetching recommendations:", error.message);
+    console.error("❌ Error fetching recommendations from ML service");
+
+    if (error.response) {
+      // Request made and server responded
+      console.error("📡 Response status:", error.response.status);
+      console.error("📨 Response body:", error.response.data);
+    } else if (error.request) {
+      // Request made but no response received
+      console.error("🚫 No response received:", error.request);
+    } else {
+      // Something else
+      console.error("🧨 Error:", error.message);
+    }
+    
     res.status(500).json({error: "Internal Server Error"});
   }
 };

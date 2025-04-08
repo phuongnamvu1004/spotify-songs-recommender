@@ -20,6 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {"message": "ML service is live"}
+
 @app.post("/recommend")
 async def recommend(request: Request):
     body = await request.json()
