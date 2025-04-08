@@ -21,8 +21,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
+
+@app.get("/", include_in_schema=False)
+@app.head("/", include_in_schema=False)
+async def health_check(request: Request):
     return {"message": "ML service is live",
             "allow_origins": os.getenv("BACKEND_URL"),
             "allow_credentials": True,
