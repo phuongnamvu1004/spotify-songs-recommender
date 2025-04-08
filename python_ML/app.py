@@ -22,7 +22,11 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "ML service is live"}
+    return {"message": "ML service is live",
+            "allow_origins": os.getenv("BACKEND_URL"),
+            "allow_credentials": True,
+            "allow_methods": "*",
+            "allow_headers": "*"}
 
 @app.post("/recommend")
 async def recommend(request: Request):
