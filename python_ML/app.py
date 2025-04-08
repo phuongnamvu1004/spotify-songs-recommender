@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
+print(f"✅ FastAPI is listening on port {os.environ.get('PORT')}")
 app = FastAPI()
 
 app.add_middleware(
