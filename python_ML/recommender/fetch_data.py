@@ -1,9 +1,4 @@
 import requests
-import os
-import dotenv
-
-dotenv.load_dotenv()
-backend_url = os.getenv("BACKEND_URL")
 
 def fetch_user_playlists(access_token):
     url = "https://api.spotify.com/v1/me/playlists"

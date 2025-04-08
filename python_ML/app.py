@@ -11,5 +11,5 @@ async def recommend(request: Request):
     access_token = body.get("accessToken")
     preferences = body.get("preferences")
 
-    result =  recommender(access_token, preferences)
+    result = recommender(access_token, preferences)
     return json.loads(result)
