@@ -14,7 +14,8 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("BACKEND_URL")],  # Or limit to ["https://your-node-backend.onrender.com"]
+    # allow_origins=[os.getenv("BACKEND_URL")],  # Or limit to ["https://your-node-backend.onrender.com"]
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
