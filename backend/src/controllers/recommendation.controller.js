@@ -32,7 +32,7 @@ export const getRecommendations = async (req, res) => {
 
     console.log("🔍 Fetching recommendations from ML service...", ml_service_url);
 
-    const responsePython = await axios.post(`${ml_service_url}/recommend`, {
+    const responsePython = await axios.post(`${ml_service_url}/recommend-songs`, {
       preferences, accessToken,
     });
 

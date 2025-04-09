@@ -21,7 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.get("/", include_in_schema=False)
 @app.head("/", include_in_schema=False)
 async def health_check(request: Request):
@@ -31,9 +30,9 @@ async def health_check(request: Request):
             "allow_methods": "*",
             "allow_headers": "*"}
 
-@app.post("/recommend")
+@app.post("/recommend-songs")
 async def recommend(request: Request):
-    print("📥 /recommend called")
+    print("📥 /recommend-songs called")
     body = await request.json()
     print("🧠 Received body:", body)
     access_token = body.get("accessToken")
