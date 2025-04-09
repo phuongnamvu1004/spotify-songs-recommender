@@ -45,3 +45,11 @@ async def recommend(request: Request):
     except Exception as e:
         print("❌ Error in recommendation:", str(e))
         return {"error": "Recommendation engine failed", "details": str(e)}
+
+# dummy endpoint to test POST requests
+@app.post("/test-post")
+async def test_post(request: Request):
+    print("📨 /test-post hit")
+    body = await request.json()
+    print("📦 Body received:", body)
+    return {"status": "success", "received": body}

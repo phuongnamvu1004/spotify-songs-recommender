@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     gcc \
     libpq-dev \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip, setuptools, and wheel
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
