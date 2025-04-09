@@ -4,8 +4,11 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies if needed (optional)
+# Install system dependencies if needed
 RUN apt-get update && apt-get install -y build-essential
+
+# Upgrade pip, setuptools, and wheel
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Copy only requirements first for cache efficiency
 COPY requirements.txt .
@@ -20,5 +23,5 @@ COPY . .
 ENV PORT=10000
 EXPOSE $PORT
 
-# 🔧 Use shell form so $PORT gets expanded
+# Use shell form so $PORT gets expanded
 CMD uvicorn app:app --host 0.0.0.0 --port $PORT
