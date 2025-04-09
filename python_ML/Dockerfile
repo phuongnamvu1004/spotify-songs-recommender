@@ -28,4 +28,4 @@ ENV PORT=10000
 EXPOSE $PORT
 
 # Run the app
-CMD uvicorn app:app --host 0.0.0.0 --port $PORT
+CMD uvicorn app:app --host 0.0.0.0 --port $PORT --timeout-keep-alive 60
