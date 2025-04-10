@@ -18,7 +18,7 @@ def recommender(access_token, preferences):
     "popularity", "release_date", "speechiness", "tempo", "valence", "year"
     ]
 
-    df = pd.read_csv("spotify_data.csv").head(70000)
+    df = pd.read_csv("spotify_data.csv").head(100000)
 
     df = df.rename(columns={"-e": "release_date"})
     spotify_df = df[FEATURES]
